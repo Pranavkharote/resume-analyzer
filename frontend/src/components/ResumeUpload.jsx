@@ -42,24 +42,13 @@ const ResumeUpload = () => {
     <div className="flex flex-col items-center mt-12 px-4 md:px-0">
       <h1 className="text-3xl font-bold mb-8 text-center">AI Resume Analyzer</h1>
 
-      {/* File input */}
-      <label className="w-full max-w-md mb-4">
-        <div className="border border-gray-300 rounded-lg p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer text-center">
-          {file ? (
-            <span className="text-gray-800 font-medium">{file.name}</span>
-          ) : (
-            <span className="text-gray-400">Click to select a PDF file</span>
-          )}
-        </div>
-        <input
-          type="file"
-          accept=".pdf"
-          onChange={(e) => setFile(e.target.files[0])}
-          className="hidden"
-        />
-      </label>
+      <input
+        type="file"
+        accept=".pdf"
+        onChange={(e) => setFile(e.target.files[0])}
+        className="mb-4 w-full max-w-md border border-gray-300 p-3 rounded-lg bg-gray-50"
+      />
 
-      {/* Upload button */}
       <button
         onClick={handleUpload}
         disabled={loading}
