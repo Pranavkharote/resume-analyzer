@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
-import "../index.css"; 
+import ResultDisplay from "./ResultDisplay";
 
 const ResumeUpload = () => {
   const [file, setFile] = useState(null);
-  const [text, setText] = useState("");
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
-  };
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Please select a PDF file first!");
+      alert("Please upload a resume first");
       return;
     }
 
@@ -26,48 +22,76 @@ const ResumeUpload = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
-      console.log("Backend response:", res.data);
+      console.log("✅ Backend response:", res.data);
 
-      if (res.data && res.data.text) {
-        setText(res.data.text);
-      } else if (res.data && res.data.error) {
-        alert("Server Error: " + res.data.error);
-      } else {
-        alert("Unexpected response from server"); // Only shows if response has no text or error
+      if (!res.data || res.data.error) {
+        alert("Unexpected server response");
+        return;
       }
-    } catch (err) {
-      console.error("Upload failed:", err);
-      alert("Failed to upload or parse PDF");
+
+      setResult(res.data);
+    } catch (error) {
+      console.error("❌ Upload failed:", error);
+      alert("Upload failed: " + (error.response?.data?.error || error.message));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="p-6 max-w-lg mx-auto">
-      <h1 className="text-xl font-bold mb-4">Upload Resume</h1>
+    <div className="flex flex-col items-center mt-12 px-4 md:px-0">
+      <h1 className="text-3xl font-bold mb-8 text-center">AI Resume Analyzer</h1>
 
-      <input
-        type="file"
-        accept="application/pdf"
-        onChange={handleFileChange}
-        className="border p-2 rounded w-full"
-      />
+      {/* File input */}
+      <label className="w-full max-w-md mb-4">
+        <div className="border border-gray-300 rounded-lg p-3 bg-gray-50 hover:bg-gray-100 cursor-pointer text-center">
+          {file ? (
+            <span className="text-gray-800 font-medium">{file.name}</span>
+          ) : (
+            <span className="text-gray-400">Click to select a PDF file</span>
+          )}
+        </div>
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={(e) => setFile(e.target.files[0])}
+          className="hidden"
+        />
+      </label>
 
+      {/* Upload button */}
       <button
         onClick={handleUpload}
         disabled={loading}
-        className="mt-4 bg-red px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+        className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 w-full max-w-md"
       >
-        {loading ? "Uploading..." : "Upload"}
+        {loading && (
+          <svg
+            className="animate-spin h-5 w-5 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            ></circle>
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+            ></path>
+          </svg>
+        )}
+        {loading ? "Uploading..." : "Upload & Analyze"}
       </button>
 
-      {text && (
-        <div className="mt-6 p-4 border rounded-lg bg-gray-50 whitespace-pre-wrap">
-          <h2 className="text-lg font-semibold mb-2">Extracted Text:</h2>
-          <p>{text}</p>
-        </div>
-      )}
+      {/* Display Result */}
+      {result && <ResultDisplay data={result} />}
     </div>
   );
 };
