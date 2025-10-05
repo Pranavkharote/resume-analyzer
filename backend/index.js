@@ -9,6 +9,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+const allowedOrigins = [
+  'http://localhost:5000', // ✅ Dev
+  'https://resume-analyzer-tfn3.vercel.app/', // ✅ Your deployed frontend
+];
+
+
 // --- Multer setup ---
 const storage = multer.memoryStorage();
 const upload = multer({ storage });

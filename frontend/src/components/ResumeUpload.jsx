@@ -18,7 +18,7 @@ const ResumeUpload = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post("http://localhost:5000/upload", formData, {
+      const res = await axios.post("https://resume-analyzer-mmz4.onrender.com/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -40,7 +40,9 @@ const ResumeUpload = () => {
 
   return (
     <div className="flex flex-col items-center mt-12 px-4 md:px-0">
-      <h1 className="text-3xl font-bold mb-8 text-center">AI Resume Analyzer</h1>
+      <h1 className="text-3xl font-bold mb-8 text-center">
+        AI Resume Analyzer
+      </h1>
 
       <input
         type="file"
