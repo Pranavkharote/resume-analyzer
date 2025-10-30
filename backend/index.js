@@ -11,6 +11,7 @@ app.use(express.json());
 // ✅ Allow your frontend origin only
 const allowedOrigins = [
   "http://localhost:5000",
+   "http://localhost:5173",  
   "https://resume-analyzer-tfn3.vercel.app",
 ];
 app.use(
