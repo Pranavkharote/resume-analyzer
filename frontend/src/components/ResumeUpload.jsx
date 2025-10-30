@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import axios from "axios";
 import ResultDisplay from "./ResultDisplay";
+import { motion } from "framer-motion";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 const ResumeUpload = () => {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const handleUpload = async () => {
     if (!file) {
@@ -18,10 +22,22 @@ const ResumeUpload = () => {
 
     try {
       setLoading(true);
-      const res = await axios.post("https://resume-analyzer-mmz4.onrender.com/upload", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      setProgress(10);
 
+      const res = await axios.post(
+        "https://resume-analyzer-mmz4.onrender.com/upload",
+        // "http://localhost:5000/upload",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          onUploadProgress: (e) => {
+            const percent = Math.round((e.loaded * 100) / e.total);
+            setProgress(percent);
+          },
+        }
+      );
+
+      setProgress(90);
       console.log("✅ Backend response:", res.data);
 
       if (!res.data || res.data.error) {
@@ -29,60 +45,85 @@ const ResumeUpload = () => {
         return;
       }
 
-      setResult(res.data);
+      setTimeout(() => {
+        setResult(res.data);
+        setProgress(100);
+      }, 500);
     } catch (error) {
       console.error("❌ Upload failed:", error);
       alert("Upload failed: " + (error.response?.data?.error || error.message));
+      setProgress(0);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="flex flex-col items-center mt-12 px-4 md:px-0">
-      <h1 className="text-3xl font-bold mb-8 text-center">
-        AI Resume Analyzer
-      </h1>
-
-      <input
-        type="file"
-        accept=".pdf"
-        onChange={(e) => setFile(e.target.files[0])}
-        className="mb-4 w-full max-w-md border border-gray-300 p-3 rounded-lg bg-gray-50"
-      />
-
-      <button
-        onClick={handleUpload}
-        disabled={loading}
-        className="flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 w-full max-w-md"
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white px-4 py-12">
+      {/* Title Section */}
+      <motion.h1
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-4xl md:text-5xl font-extrabold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400"
       >
-        {loading && (
-          <svg
-            className="animate-spin h-5 w-5 text-white"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-            ></path>
-          </svg>
-        )}
-        {loading ? "Uploading..." : "Upload & Analyze"}
-      </button>
+        AI Resume Analyzer
+      </motion.h1>
 
-      {/* Display Result */}
-      {result && <ResultDisplay data={result} />}
+      {/* Upload Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8 }}
+        className="bg-gray-800/60 backdrop-blur-xl border border-gray-700 p-8 rounded-2xl shadow-2xl w-full max-w-lg text-center"
+      >
+        <input
+          type="file"
+          accept=".pdf"
+          onChange={(e) => setFile(e.target.files[0])}
+          className="w-full mb-6 border border-gray-600 p-3 rounded-lg bg-gray-900/70 text-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <button
+          onClick={handleUpload}
+          disabled={loading}
+          className="relative w-full py-3 text-lg font-semibold rounded-lg bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition-all disabled:opacity-50"
+        >
+          {loading ? "Analyzing..." : "Upload & Analyze"}
+        </button>
+
+        {/* Progress Loader */}
+        {loading && (
+          <div className="mt-6 flex flex-col items-center justify-center gap-4">
+            <div className="w-24 h-24">
+              <CircularProgressbar
+                value={progress}
+                text={`${progress}%`}
+                styles={buildStyles({
+                  textColor: "#fff",
+                  pathColor: "#3b82f6",
+                  trailColor: "#1f2937",
+                })}
+              />
+            </div>
+            <p className="text-sm text-gray-400 animate-pulse">
+              Analyzing your resume with AI...
+            </p>
+          </div>
+        )}
+      </motion.div>
+
+      {/* Result */}
+      {result && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6 }}
+          className="mt-10 w-full max-w-4xl"
+        >
+          <ResultDisplay data={result} />
+        </motion.div>
+      )}
     </div>
   );
 };

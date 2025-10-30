@@ -1,11 +1,17 @@
-import React from 'react'
-
-import ResumeUpload from './components/ResumeUpload'
-import './index.css'
+import React from "react";
+import { Routes, Route, BrowserRouter as Router } from "react-router-dom";
+import ResumeUpload from "./components/ResumeUpload";
+import "./index.css";
+import LandingPage from "./pages/LandingPage";
 const App = () => {
   return (
-    <ResumeUpload/>
-  )
-}
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/upload" element={<ResumeUpload />} />
+      </Routes>
+    </Router>
+  );
+};
 
-export default App
+export default App;

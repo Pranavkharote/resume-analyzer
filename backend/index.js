@@ -11,7 +11,7 @@ app.use(express.json());
 // ✅ Allow your frontend origin only
 const allowedOrigins = [
   "http://localhost:5000",
-   "http://localhost:5173",  
+  "http://localhost:5173",
   "https://resume-analyzer-tfn3.vercel.app",
 ];
 app.use(
@@ -76,9 +76,12 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
 
     const pdfData = await pdfParse(req.file.buffer);
     const resumeText = pdfData.text?.trim();
-    if (!resumeText) return res.status(400).json({ error: "No readable text found in PDF" });
+    if (!resumeText)
+      return res.status(400).json({ error: "No readable text found in PDF" });
 
-    const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "models/gemini-2.5-flash",
+    });
     const chunks = chunkText(resumeText, 2000);
 
     const finalResult = {
@@ -102,12 +105,16 @@ Resume section:
 ${chunk}
 `;
       const result = await model.generateContent(prompt);
-      let text = result.response.text().replace(/```json|```/g, "").trim();
+      let text = result.response
+        .text()
+        .replace(/```json|```/g, "")
+        .trim();
       const parsed = safeJSONParse(text);
 
       // Merge results from chunk
       if (parsed.atsScore) finalResult.atsScore += parsed.atsScore;
-      if (parsed.missingKeywords) finalResult.missingKeywords.push(...parsed.missingKeywords);
+      if (parsed.missingKeywords)
+        finalResult.missingKeywords.push(...parsed.missingKeywords);
       if (parsed.feedback) finalResult.feedback.push(...parsed.feedback);
       if (parsed.strengths) finalResult.strengths.push(...parsed.strengths);
     }
@@ -121,7 +128,6 @@ ${chunk}
     finalResult.strengths = [...new Set(finalResult.strengths)];
 
     res.json(finalResult);
-
   } catch (error) {
     console.error("❌ Error analyzing resume:", error);
     res.status(500).json({ error: "Failed to analyze resume" });
@@ -131,4 +137,3 @@ ${chunk}
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
- 
