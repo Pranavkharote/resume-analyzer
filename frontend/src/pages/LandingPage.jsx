@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { CheckCircle, FileText, Brain, BarChart, Users, Star } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const LandingPage = () => {
   return (
@@ -23,12 +24,12 @@ const LandingPage = () => {
         >
           Optimize your resume instantly with AI. Get your ATS score, keyword insights, and personalized improvement suggestions — in seconds.
         </motion.p>
-        <a
+        <Link
           href="/upload"
           className="bg-yellow-400 text-blue-900 font-semibold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-all"
         >
           Try It Free →
-        </a>
+        </Link>
       </section>
 
       {/* Features Section */}
