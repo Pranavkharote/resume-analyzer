@@ -25,7 +25,7 @@ const LandingPage = () => {
           Optimize your resume instantly with AI. Get your ATS score, keyword insights, and personalized improvement suggestions — in seconds.
         </motion.p>
         <Link
-          href="/upload/resume"
+          to="/upload/resume"
           className="bg-yellow-400 text-blue-900 font-semibold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-all"
         >
           Try It Free →
