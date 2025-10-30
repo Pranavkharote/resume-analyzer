@@ -10,8 +10,8 @@ app.use(express.json());
 
 // ✅ Allow your frontend origin only
 const allowedOrigins = [
-  "http://localhost:5000", // Dev
-  "https://resume-analyzer-tfn3.vercel.app", // Prod
+  "http://localhost:5000",
+  "https://resume-analyzer-tfn3.vercel.app",
 ];
 app.use(
   cors({
@@ -32,28 +32,63 @@ const upload = multer({ storage });
 // --- Gemini setup ---
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
+// --- Helper: split resume into chunks ---
+function chunkText(text, maxLength = 2000) {
+  const words = text.split(/\s+/);
+  const chunks = [];
+  let current = [];
+  let currentLength = 0;
+
+  for (const word of words) {
+    current.push(word);
+    currentLength += word.length + 1;
+    if (currentLength >= maxLength) {
+      chunks.push(current.join(" "));
+      current = [];
+      currentLength = 0;
+    }
+  }
+  if (current.length) chunks.push(current.join(" "));
+  return chunks;
+}
+
+// --- Helper: safely parse JSON ---
+function safeJSONParse(str) {
+  try {
+    return JSON.parse(str);
+  } catch {
+    // fallback: try to extract {...} from text
+    const match = str.match(/\{[\s\S]*\}/);
+    if (match) {
+      try {
+        return JSON.parse(match[0]);
+      } catch {}
+    }
+    return { raw: str };
+  }
+}
+
 // --- Upload + AI Review Route ---
 app.post("/upload", upload.single("resume"), async (req, res) => {
   try {
-    // Step 1: File validation
-    if (!req.file) {
-      return res.status(400).json({ error: "No file uploaded" });
-    }
+    if (!req.file) return res.status(400).json({ error: "No file uploaded" });
 
-    // Step 2: Extract PDF text
     const pdfData = await pdfParse(req.file.buffer);
     const resumeText = pdfData.text?.trim();
+    if (!resumeText) return res.status(400).json({ error: "No readable text found in PDF" });
 
-    if (!resumeText) {
-      return res.status(400).json({ error: "No readable text found in PDF" });
-    }
+    const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+    const chunks = chunkText(resumeText, 2000);
 
-    // Step 3: Prepare Gemini model & prompt
-    const model = genAI.getGenerativeModel({
-      model: "models/gemini-2.5-flash",
-    });
+    const finalResult = {
+      atsScore: 0,
+      missingKeywords: [],
+      feedback: [],
+      strengths: [],
+    };
 
-    const prompt = `
+    for (const chunk of chunks) {
+      const prompt = `
 You are an ATS evaluator.
 Analyze the resume text and return strictly valid JSON:
 {
@@ -62,28 +97,29 @@ Analyze the resume text and return strictly valid JSON:
   "feedback": [list of strings],
   "strengths": [list of strings]
 }
-Resume:
-${resumeText}
+Resume section:
+${chunk}
 `;
+      const result = await model.generateContent(prompt);
+      let text = result.response.text().replace(/```json|```/g, "").trim();
+      const parsed = safeJSONParse(text);
 
-    // Step 4: Generate AI review
-    const result = await model.generateContent(prompt);
-    let text = result.response.text();
-
-    // Step 5: Clean up AI output
-    text = text.replace(/```json|```/g, "").trim();
-
-    // Step 6: Try parsing AI JSON safely
-    let parsed;
-    try {
-      parsed = JSON.parse(text);
-    } catch (err) {
-      console.warn("⚠️ Gemini returned non-JSON text, sending raw instead.");
-      parsed = { raw: text };
+      // Merge results from chunk
+      if (parsed.atsScore) finalResult.atsScore += parsed.atsScore;
+      if (parsed.missingKeywords) finalResult.missingKeywords.push(...parsed.missingKeywords);
+      if (parsed.feedback) finalResult.feedback.push(...parsed.feedback);
+      if (parsed.strengths) finalResult.strengths.push(...parsed.strengths);
     }
-    console.log(parsed)
-    // Step 7: Send final response
-    res.json(parsed);
+
+    // Average atsScore if multiple chunks
+    finalResult.atsScore = Math.round(finalResult.atsScore / chunks.length);
+
+    // Deduplicate arrays
+    finalResult.missingKeywords = [...new Set(finalResult.missingKeywords)];
+    finalResult.feedback = [...new Set(finalResult.feedback)];
+    finalResult.strengths = [...new Set(finalResult.strengths)];
+
+    res.json(finalResult);
 
   } catch (error) {
     console.error("❌ Error analyzing resume:", error);
