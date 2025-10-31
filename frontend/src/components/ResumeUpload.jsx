@@ -4,6 +4,7 @@ import ResultDisplay from "./ResultDisplay";
 import { motion } from "framer-motion";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { toast, ToastContainer } from "react-toastify";
 
 const ResumeUpload = () => {
   const [file, setFile] = useState(null);
@@ -14,8 +15,8 @@ const ResumeUpload = () => {
   const [progress, setProgress] = useState(0);
 
   const handleUpload = async () => {
-    if (!file || !jobPosition || !description) {
-      alert("Please fill all fields and upload a resume.");
+    if (!file) {
+      toast.info("Resume upload is required to start analysis.");
       return;
     }
 
@@ -24,7 +25,7 @@ const ResumeUpload = () => {
     formData.append("jobPosition", jobPosition);
     formData.append("description", description);
 
-    console.log(formData);
+    // console.log(formData);
 
     try {
       setLoading(true);
@@ -42,7 +43,7 @@ const ResumeUpload = () => {
 
       setProgress(90);
       if (!res.data || res.data.error) {
-        alert("Unexpected server response");
+        toast.error("Unexpected server response");
         return;
       }
 
@@ -60,15 +61,21 @@ const ResumeUpload = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 via-blue-900 to-black text-white px-4 py-12">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-400 via-blue-400 to-red-200 text-white px-4 py-12">
       <motion.h1
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-cyan-400"
+        className="text-4xl md:text-5xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-800"
       >
         AI Resume Analyzer
       </motion.h1>
+      <p className="text-gray-600 text-center mb-6 max-w-2xl">
+  Upload your resume for a comprehensive AI-driven analysis. 
+  Adding your job title and description is optional but can enhance the precision of the results. 
+  You can still generate a full report without them.
+</p>
+
 
       {/* Upload Card */}
       <motion.div
@@ -79,7 +86,12 @@ const ResumeUpload = () => {
       >
         {/* Resume Upload */}
         <div className="flex-1 flex flex-col items-center justify-center w-full">
-        <label htmlFor="dropzone-file"  className="mb-2 text-sm font-medium text-gray-300">Upload Your Resume</label>
+          <label
+            htmlFor="dropzone-file"
+            className="mb-2 text-sm font-medium text-gray-300"
+          >
+            Upload Your Resume <span className="text-red-500">*</span>
+          </label>
           <label
             htmlFor="dropzone-file"
             className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-500 rounded-xl cursor-pointer bg-gray-900/50 hover:bg-gray-800 transition-colors"
@@ -161,11 +173,11 @@ const ResumeUpload = () => {
       {/* Submit Button */}
       <motion.button
         onClick={handleUpload}
-        disabled={loading || !file || !jobPosition || !description}
+        // disabled={loading || !file || !jobPosition || !description}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-8 w-full max-w-md py-3 font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition-all disabled:opacity-50"
+        className="mt-8 w-full max-w-md py-3 cursor-pointer font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition-all disabled:opacity-50"
       >
         {loading ? "Analyzing..." : "Upload & Analyze"}
       </motion.button>
@@ -201,6 +213,7 @@ const ResumeUpload = () => {
           <ResultDisplay data={result} />
         </motion.div>
       )}
+      <ToastContainer />
     </div>
   );
 };
