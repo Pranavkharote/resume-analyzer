@@ -122,7 +122,7 @@ const ResultDisplay = ({ data }) => {
         </ul>
       </div>
       <div>
-        <p className="text-xl font-semibold mb-3 text-gray-700">Suggested Job Roles</p>
+        {/* <p className="text-xl font-semibold mb-3 text-gray-700">Suggested Job Roles</p>
         <ul className="list-disc pl-6 space-y-2 text-blue-900">
           {jobRoleSuggestions?.map((s, i) => (
             <li key={i} className="bg-green-50 p-2 rounded-lg shadow-inner border border-green-100">
@@ -130,7 +130,7 @@ const ResultDisplay = ({ data }) => {
             </li>
           ))}
         </ul>
-      </div>
+      </div> */}
       {data && (
   <button
     onClick={() => handleDownloadReport(data)}
