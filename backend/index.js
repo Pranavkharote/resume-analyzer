@@ -25,6 +25,7 @@ app.use(
     },
   })
 );
+// app.use(cors("*"));
 
 // --- Multer setup ---
 const storage = multer.memoryStorage();
@@ -73,7 +74,10 @@ function safeJSONParse(str) {
 app.post("/upload", upload.single("resume"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
-
+    const description = req.body.description;
+    if (!description)
+      return res.status(400).json({ error: "No description added" });
+    // console.log(req.body.description);
     const pdfData = await pdfParse(req.file.buffer);
     const resumeText = pdfData.text?.trim();
     if (!resumeText)
@@ -93,17 +97,31 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
 
     for (const chunk of chunks) {
       const prompt = `
-You are an ATS evaluator.
-Analyze the resume text and return strictly valid JSON:
+You are an expert ATS (Applicant Tracking System) evaluator.
+
+Compare the candidate's resume with the provided job description and return a JSON response strictly in this format:
 {
   "atsScore": number (0-100),
   "missingKeywords": [list of strings],
   "feedback": [list of strings],
-  "strengths": [list of strings]
+  "strengths": [list of strings],
+  "matchingSummary": string
 }
-Resume section:
+
+Guidelines:
+- "atsScore" reflects how well the resume matches the job description (skills, experience, and keywords).
+- "missingKeywords" should list important terms or skills from the job description missing in the resume.
+- "feedback" should give specific, actionable improvements (e.g. “Add measurable achievements”, “Mention relevant tools like React or Docker”).
+- "strengths" should list what the resume does well in relation to the job.
+- "matchingSummary" should be a concise summary (2–3 sentences) describing the overall fit.
+
+Job Description:
+${description}
+
+Resume:
 ${chunk}
 `;
+
       const result = await model.generateContent(prompt);
       let text = result.response
         .text()
