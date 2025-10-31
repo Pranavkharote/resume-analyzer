@@ -108,7 +108,8 @@ Compare the candidate's resume with the provided job position and job descriptio
   "missingKeywords": [list of strings],
   "feedback": [list of strings],
   "strengths": [list of strings],
-  "matchingSummary": string
+  "matchingSummary": string,
+  "jobRoleSuggestions: [list od strings]
 }
 
 Guidelines:
