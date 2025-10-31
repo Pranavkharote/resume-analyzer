@@ -24,7 +24,7 @@ const ResumeUpload = () => {
     formData.append("jobPosition", jobPosition);
     formData.append("description", description);
 
-    console.log(formData)
+    console.log(formData);
 
     try {
       setLoading(true);
@@ -35,7 +35,8 @@ const ResumeUpload = () => {
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
-          onUploadProgress: (e) => setProgress(Math.round((e.loaded * 100) / e.total)),
+          onUploadProgress: (e) =>
+            setProgress(Math.round((e.loaded * 100) / e.total)),
         }
       );
 
@@ -77,46 +78,55 @@ const ResumeUpload = () => {
         className="bg-gray-800/60 backdrop-blur-xl border border-gray-700 p-8 rounded-3xl shadow-2xl w-full max-w-6xl flex flex-col md:flex-row gap-6 items-start"
       >
         {/* Resume Upload */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full">
-  <label
-    htmlFor="dropzone-file"
-    className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-500 rounded-xl cursor-pointer bg-gray-900/50 hover:bg-gray-800 transition-colors"
-  >
-    <div className="flex flex-col items-center justify-center">
-      <svg
-        className="w-10 h-10 mb-2 text-gray-400"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v4h16v-4M12 12V3m0 0L8 7m4-4 4 4" />
-      </svg>
-      {!file ? (
-        <p className="text-gray-300 font-medium text-center">
-          Click or drag to upload <br /> <span className="text-sm">(PDF only)</span>
-        </p>
-      ) : (
-        <p className="text-green-400 font-medium text-center">
-          Selected file: {file.name}
-        </p>
-      )}
-    </div>
-    <input
-      id="dropzone-file"
-      type="file"
-      accept=".pdf"
-      onChange={(e) => setFile(e.target.files[0])}
-      className="hidden"
-    />
-  </label>
-</div>
-
+        <div className="flex-1 flex flex-col items-center justify-center w-full">
+        <label htmlFor="dropzone-file"  className="mb-2 text-sm font-medium text-gray-300">Upload Your Resume</label>
+          <label
+            htmlFor="dropzone-file"
+            className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-500 rounded-xl cursor-pointer bg-gray-900/50 hover:bg-gray-800 transition-colors"
+          >
+            <div className="flex flex-col items-center justify-center">
+              <svg
+                className="w-10 h-10 mb-2 text-gray-400"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v4h16v-4M12 12V3m0 0L8 7m4-4 4 4"
+                />
+              </svg>
+              {!file ? (
+                <p className="text-gray-300 font-medium text-center">
+                  Click or drag to upload <br />{" "}
+                  <span className="text-sm">(PDF only)</span>
+                </p>
+              ) : (
+                <p className="text-gray-300 font-medium text-center">
+                  {file.name}
+                </p>
+              )}
+            </div>
+            <input
+              id="dropzone-file"
+              type="file"
+              accept=".pdf"
+              onChange={(e) => setFile(e.target.files[0])}
+              className="hidden"
+            />
+          </label>
+        </div>
 
         {/* Job Position & Description */}
         <div className="flex-1 flex flex-col gap-4 w-full">
           <div className="flex flex-col">
-            <label htmlFor="jobPosition" className="mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="jobPosition"
+              className="mb-2 text-sm font-medium text-gray-300"
+            >
               Job Position
             </label>
             <input
@@ -130,7 +140,10 @@ const ResumeUpload = () => {
           </div>
 
           <div className="flex flex-col">
-            <label htmlFor="jobDescription" className="mb-2 text-sm font-medium text-gray-300">
+            <label
+              htmlFor="jobDescription"
+              className="mb-2 text-sm font-medium text-gray-300"
+            >
               Job Description
             </label>
             <textarea
@@ -171,7 +184,9 @@ const ResumeUpload = () => {
               })}
             />
           </div>
-          <p className="text-sm text-gray-400 animate-pulse">Analyzing your resume with AI...</p>
+          <p className="text-sm text-gray-400 animate-pulse">
+            Analyzing your resume with AI...
+          </p>
         </div>
       )}
 

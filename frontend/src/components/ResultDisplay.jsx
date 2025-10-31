@@ -28,7 +28,8 @@ const handleDownloadReport = (data) => {
   };
 
   // Title
-  addHeading("AI Resume Analysis");
+  addHeading("AI Resume Analysis By JobLens");
+  addHeading("Developed by Pranav Kharote");
 
   // ATS Score
   addHeading("ATS Score");
@@ -52,7 +53,7 @@ const handleDownloadReport = (data) => {
 const ResultDisplay = ({ data }) => {
   if (!data) return null;
 
-  const { atsScore, missingKeywords, feedback, strengths } = data;
+  const { atsScore, missingKeywords, feedback, strengths, jobRoleSuggestions } = data;
 
   return (
     <div className="max-w-4xl mx-auto mt-10 p-8 bg-gradient-to-b from-white to-gray-50 rounded-3xl shadow-xl border border-gray-200">
@@ -114,6 +115,16 @@ const ResultDisplay = ({ data }) => {
         <p className="text-xl font-semibold mb-3 text-gray-700">Strengths</p>
         <ul className="list-disc pl-6 space-y-2 text-green-700">
           {strengths?.map((s, i) => (
+            <li key={i} className="bg-green-50 p-2 rounded-lg shadow-inner border border-green-100">
+              {s}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p className="text-xl font-semibold mb-3 text-gray-700">Suggested Job Roles</p>
+        <ul className="list-disc pl-6 space-y-2 text-blue-900">
+          {jobRoleSuggestions?.map((s, i) => (
             <li key={i} className="bg-green-50 p-2 rounded-lg shadow-inner border border-green-100">
               {s}
             </li>
