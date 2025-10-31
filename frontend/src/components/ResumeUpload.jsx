@@ -24,6 +24,8 @@ const ResumeUpload = () => {
     formData.append("jobPosition", jobPosition);
     formData.append("description", description);
 
+    console.log(formData)
+
     try {
       setLoading(true);
       setProgress(10);

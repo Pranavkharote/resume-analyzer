@@ -76,7 +76,8 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
     const jobPosition = req.body.jobPosition;
     const description = req.body.description;
-    console.log(description);
+    console.log("description :", description);
+    console.log("jobPosition :", jobPosition);
     // if (!description)
     //   return res.status(400).json({ error: "No description added" });
     // console.log(req.body.description);
