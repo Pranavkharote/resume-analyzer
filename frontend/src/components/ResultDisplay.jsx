@@ -1,5 +1,6 @@
 import React from "react";
 import jsPDF from "jspdf";
+import { motion } from "framer-motion";
 import { CheckCircle, XCircle, Star, Briefcase } from "lucide-react";
 
 const handleDownloadReport = (data) => {
@@ -49,109 +50,112 @@ const ResultDisplay = ({ data }) => {
   const { atsScore, missingKeywords, feedback, strengths, jobRoleSuggestions } = data;
 
   return (
-    <section className="w-full py-16 bg-gradient-to-br from-indigo-800 via-purple-700 to-pink-600">
-      <div className="max-w-5xl mx-auto px-6 md:px-0">
-        <h2 className="text-4xl md:text-5xl font-extrabold text-white text-center mb-12 drop-shadow-lg">
-          AI-Powered Resume Insights
-        </h2>
+    <div className="max-w-6xl mx-auto mt-12 p-8 rounded-3xl bg-gradient-to-r from-indigo-800 via-purple-800 to-pink-800 text-white shadow-2xl border border-white/20">
+      <h2 className="text-4xl font-extrabold mb-10 text-center tracking-wide">
+        AI Resume Analysis
+      </h2>
 
-        {/* ATS Score */}
-        <div className="mb-12 bg-gradient-to-r from-white/10 via-white/5 to-white/10 p-8 rounded-3xl shadow-xl border border-white/20">
-          <p className="text-xl font-semibold text-white mb-4">ATS Score</p>
-          <div className="w-full bg-white/20 rounded-full h-6 overflow-hidden">
-            <div
-              className={`h-6 rounded-full transition-all duration-700 ${
-                atsScore > 80
-                  ? "bg-green-400"
-                  : atsScore > 50
-                  ? "bg-yellow-400"
-                  : "bg-red-400"
-              }`}
-              style={{ width: `${atsScore}%` }}
-            ></div>
-          </div>
-          <p className="text-center mt-2 font-medium text-white/90">{atsScore}% Match</p>
+      {/* ATS Score */}
+      <div className="mb-12">
+        <p className="text-xl font-semibold mb-4">ATS Score</p>
+        <div className="w-full bg-white/20 rounded-full h-6 overflow-hidden">
+          <div
+            className={`h-6 rounded-full transition-all duration-700 ${
+              atsScore > 80
+                ? "bg-green-400"
+                : atsScore > 50
+                ? "bg-yellow-400"
+                : "bg-red-400"
+            }`}
+            style={{ width: `${atsScore}%` }}
+          ></div>
         </div>
+        <p className="text-center mt-2 font-medium text-white">{atsScore}% Match</p>
+      </div>
 
-        {/* Missing Keywords */}
-        <div className="mb-12 bg-white/10 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-          <p className="text-xl font-semibold text-white mb-4">Missing Keywords</p>
-          <div className="flex flex-wrap gap-3">
-            {missingKeywords?.length ? (
-              missingKeywords.map((kw, idx) => (
-                <span
-                  key={idx}
-                  className="bg-red-600/20 text-red-100 px-4 py-2 rounded-full text-sm font-medium shadow-sm hover:bg-red-500/30 transition"
-                >
-                  {kw}
-                </span>
-              ))
-            ) : (
-              <div className="flex items-center gap-2 text-green-200 font-semibold">
-                <CheckCircle size={18} /> No missing keywords!
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Feedback */}
-        <div className="mb-12 bg-white/10 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-          <p className="text-xl font-semibold text-white mb-4">Feedback</p>
-          <ul className="list-decimal pl-6 space-y-3 text-white/90">
-            {feedback?.map((f, i) => (
-              <li
-                key={i}
-                className="bg-white/10 p-4 rounded-2xl border border-white/20 shadow-sm hover:bg-white/20 transition"
+      {/* Missing Keywords */}
+      <div className="mb-12">
+        <p className="text-xl font-semibold mb-6">Missing Keywords</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {missingKeywords?.length ? (
+            missingKeywords.map((kw, idx) => (
+              <motion.div
+                key={idx}
+                whileHover={{ scale: 1.05 }}
+                className="flex items-center gap-2 p-4 bg-red-700/30 text-red-100 rounded-2xl shadow-md transition-all font-semibold"
               >
-                {f}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Strengths */}
-        <div className="mb-12 bg-white/10 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-          <p className="text-xl font-semibold text-white mb-4">Strengths</p>
-          <ul className="list-disc pl-6 space-y-3 text-green-200">
-            {strengths?.map((s, i) => (
-              <li
-                key={i}
-                className="bg-green-600/20 p-3 rounded-xl shadow-inner border border-green-400/30 hover:bg-green-600/30 transition"
-              >
-                <Star size={16} className="inline mr-2" />
-                {s}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Suggested Job Roles */}
-        <div className="mb-12 bg-white/10 backdrop-blur-sm p-8 rounded-3xl shadow-xl border border-white/20">
-          <p className="text-xl font-semibold text-white mb-4">Suggested Job Roles</p>
-          <ul className="list-disc pl-6 space-y-3 text-blue-200">
-            {jobRoleSuggestions?.map((role, i) => (
-              <li
-                key={i}
-                className="bg-blue-600/20 p-3 rounded-xl shadow-inner border border-blue-400/30 hover:bg-blue-600/30 transition flex items-center gap-2"
-              >
-                <Briefcase size={16} />
-                {role}
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        {/* Download Button */}
-        <div className="text-center mt-6">
-          <button
-            onClick={() => handleDownloadReport(data)}
-            className="bg-white text-indigo-800 font-bold px-10 py-4 rounded-2xl shadow-xl hover:scale-105 hover:shadow-2xl transition-all"
-          >
-            Download Full Report
-          </button>
+                <XCircle size={20} /> {kw}
+              </motion.div>
+            ))
+          ) : (
+            <div className="flex items-center gap-2 text-green-200 font-semibold">
+              <CheckCircle size={20} /> No missing keywords!
+            </div>
+          )}
         </div>
       </div>
-    </section>
+
+      {/* Feedback */}
+      <div className="mb-12">
+        <p className="text-xl font-semibold mb-6">Feedback</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {feedback?.map((f, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.03 }}
+              className="bg-white/20 p-4 rounded-xl shadow-md border border-white/30 text-gray-100 transition-all"
+            >
+              {f}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Strengths */}
+      <div className="mb-12">
+        <p className="text-xl font-semibold mb-6">Strengths</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {strengths?.map((s, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-2 p-4 bg-green-700/30 text-green-100 rounded-2xl shadow-md transition-all font-semibold"
+            >
+              <Star size={20} /> {s}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Suggested Job Roles */}
+      <div className="mb-8">
+        <p className="text-xl font-semibold mb-6">Suggested Job Roles</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {jobRoleSuggestions?.map((role, i) => (
+            <motion.div
+              key={i}
+              whileHover={{ scale: 1.05 }}
+              className="flex items-center gap-2 p-4 bg-blue-700/30 text-blue-100 rounded-2xl shadow-md transition-all font-semibold"
+            >
+              <Briefcase size={20} /> {role}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+
+      {/* Download Button */}
+      {data && (
+        <div className="text-center mt-8">
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            onClick={() => handleDownloadReport(data)}
+            className="px-6 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-semibold shadow-lg transition-all"
+          >
+            Download Report
+          </motion.button>
+        </div>
+      )}
+    </div>
   );
 };
 
