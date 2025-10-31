@@ -1,3 +1,4 @@
+// ResumeUpload.jsx
 import React, { useState } from "react";
 import axios from "axios";
 import ResultDisplay from "./ResultDisplay";
@@ -25,8 +26,6 @@ const ResumeUpload = () => {
     formData.append("jobPosition", jobPosition);
     formData.append("description", description);
 
-    // console.log(formData);
-
     try {
       setLoading(true);
       setProgress(10);
@@ -42,6 +41,7 @@ const ResumeUpload = () => {
       );
 
       setProgress(90);
+
       if (!res.data || res.data.error) {
         toast.error("Unexpected server response");
         return;
@@ -53,7 +53,9 @@ const ResumeUpload = () => {
       }, 500);
     } catch (error) {
       console.error(error);
-      alert("Upload failed: " + (error.response?.data?.error || error.message));
+      toast.error(
+        "Upload failed: " + (error.response?.data?.error || error.message)
+      );
       setProgress(0);
     } finally {
       setLoading(false);
@@ -66,18 +68,16 @@ const ResumeUpload = () => {
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-extrabold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-800"
+        className="text-4xl md:text-5xl font-extrabold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-800"
       >
         AI Resume Analyzer
       </motion.h1>
-      <p className="text-gray-600 text-center mb-6 max-w-2xl">
-  Upload your resume for a comprehensive AI-driven analysis. 
-  Adding your job title and description is optional but can enhance the precision of the results. 
-  You can still generate a full report without them.
-</p>
 
+      <p className="text-gray-200 text-center mb-8 max-w-2xl">
+        Upload your resume for a comprehensive AI-driven analysis. Job title and
+        description are optional but can enhance result precision.
+      </p>
 
-      {/* Upload Card */}
       <motion.div
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
@@ -85,11 +85,8 @@ const ResumeUpload = () => {
         className="bg-gray-800/60 backdrop-blur-xl border border-gray-700 p-8 rounded-3xl shadow-2xl w-full max-w-6xl flex flex-col md:flex-row gap-6 items-start"
       >
         {/* Resume Upload */}
-        <div className="flex-1 flex flex-col items-center justify-center w-full">
-          <label
-            htmlFor="dropzone-file"
-            className="mb-2 text-sm font-medium text-gray-300"
-          >
+        <div className="flex-1 flex flex-col items-center w-full">
+          <label className="mb-2 text-sm font-medium text-gray-300">
             Upload Your Resume <span className="text-red-500">*</span>
           </label>
           <label
@@ -111,16 +108,9 @@ const ResumeUpload = () => {
                   d="M4 16v4h16v-4M12 12V3m0 0L8 7m4-4 4 4"
                 />
               </svg>
-              {!file ? (
-                <p className="text-gray-300 font-medium text-center">
-                  Click or drag to upload <br />{" "}
-                  <span className="text-sm">(PDF only)</span>
-                </p>
-              ) : (
-                <p className="text-gray-300 font-medium text-center">
-                  {file.name}
-                </p>
-              )}
+              <p className="text-gray-300 font-medium text-center">
+                {!file ? "Click or drag to upload (PDF only)" : file.name}
+              </p>
             </div>
             <input
               id="dropzone-file"
@@ -134,55 +124,32 @@ const ResumeUpload = () => {
 
         {/* Job Position & Description */}
         <div className="flex-1 flex flex-col gap-4 w-full">
-          <div className="flex flex-col">
-            <label
-              htmlFor="jobPosition"
-              className="mb-2 text-sm font-medium text-gray-300"
-            >
-              Job Position
-            </label>
-            <input
-              id="jobPosition"
-              type="text"
-              placeholder="Software Engineer"
-              value={jobPosition}
-              onChange={(e) => setJobPosition(e.target.value)}
-              className="w-full p-3 rounded-xl bg-gray-900/50 border border-gray-600 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label
-              htmlFor="jobDescription"
-              className="mb-2 text-sm font-medium text-gray-300"
-            >
-              Job Description
-            </label>
-            <textarea
-              id="jobDescription"
-              rows={6}
-              placeholder="Paste the job description here..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full p-3 rounded-xl bg-gray-900/50 border border-gray-600 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all"
-            />
-          </div>
+          <input
+            placeholder="Job Position (Optional)"
+            value={jobPosition}
+            onChange={(e) => setJobPosition(e.target.value)}
+            className="w-full p-3 rounded-xl bg-gray-900/50 border border-gray-600 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+          />
+          <textarea
+            rows={6}
+            placeholder="Job Description (Optional)"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className="w-full p-3 rounded-xl bg-gray-900/50 border border-gray-600 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all"
+          />
         </div>
       </motion.div>
 
-      {/* Submit Button */}
       <motion.button
         onClick={handleUpload}
-        // disabled={loading || !file || !jobPosition || !description}
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-8 w-full max-w-md py-3 cursor-pointer font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition-all disabled:opacity-50"
+        className="mt-8 w-full max-w-md py-3 font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition-all"
       >
         {loading ? "Analyzing..." : "Upload & Analyze"}
       </motion.button>
 
-      {/* Progress Loader */}
       {loading && (
         <div className="mt-6 flex flex-col items-center justify-center gap-4">
           <div className="w-24 h-24">
@@ -202,17 +169,8 @@ const ResumeUpload = () => {
         </div>
       )}
 
-      {/* Result */}
-      {result && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="mt-10 w-full max-w-5xl"
-        >
-          <ResultDisplay data={result} />
-        </motion.div>
-      )}
+      {result && <ResultDisplay data={result} />}
+
       <ToastContainer />
     </div>
   );

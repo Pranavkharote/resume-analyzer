@@ -1,3 +1,4 @@
+// ResultDisplay.jsx
 import React from "react";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
@@ -5,9 +6,7 @@ import { CheckCircle, XCircle, Star, Briefcase } from "lucide-react";
 
 const handleDownloadReport = (data) => {
   if (!data) return;
-
   const doc = new jsPDF("p", "pt", "a4");
-  const pageWidth = doc.internal.pageSize.getWidth();
   const margin = 40;
   let y = 40;
 
@@ -21,7 +20,7 @@ const handleDownloadReport = (data) => {
   const addContent = (text) => {
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    const lines = doc.splitTextToSize(text, pageWidth - margin * 2);
+    const lines = doc.splitTextToSize(text, 500);
     doc.text(lines, margin, y);
     y += lines.length * 14 + 15;
   };
@@ -33,7 +32,9 @@ const handleDownloadReport = (data) => {
   addContent(`${data.atsScore}% Match`);
 
   addHeading("Missing Keywords");
-  addContent(data.missingKeywords.length ? data.missingKeywords.join(", ") : "None");
+  addContent(
+    data.missingKeywords.length ? data.missingKeywords.join(", ") : "None"
+  );
 
   addHeading("Feedback");
   addContent(data.feedback.length ? data.feedback.join("\n") : "None");
@@ -46,8 +47,8 @@ const handleDownloadReport = (data) => {
 
 const ResultDisplay = ({ data }) => {
   if (!data) return null;
-
-  const { atsScore, missingKeywords, feedback, strengths, jobRoleSuggestions } = data;
+  const { atsScore, missingKeywords, feedback, strengths, jobRoleSuggestions } =
+    data;
 
   return (
     <div className="max-w-6xl mx-auto mt-12 p-8 rounded-3xl bg-gradient-to-r from-indigo-800 via-purple-800 to-pink-800 text-white shadow-2xl border border-white/20">
