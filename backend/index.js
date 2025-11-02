@@ -13,6 +13,7 @@ const allowedOrigins = [
   "http://localhost:5000",
   "http://localhost:5173",
   "https://joblensonline.vercel.app/",
+  "https://joblensonline.vercel.app//upload/resume",
 ];
 app.use(
   cors({
