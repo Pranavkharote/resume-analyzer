@@ -13,26 +13,26 @@ const allowedOrigins = [
   "https://joblensonline.vercel.app"
 ];
 
-const corsOptions = {
-  origin: function (origin, callback) {
-    // allow requests with no origin like Postman or curl
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
-  credentials: true
-};
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     // allow requests with no origin like Postman or curl
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   methods: ["GET", "POST", "OPTIONS"],
+//   allowedHeaders: ["Content-Type", "Authorization"],
+//   credentials: true
+// };
 
-// Apply CORS globally **at the top**
-app.use(cors(corsOptions));
+// // Apply CORS globally **at the top**
+// app.use(cors(corsOptions));
 
 // Handle preflight OPTIONS requests
-app.options("*", cors(corsOptions));
-
+// app.options("*", cors(corsOptions));
+app.use(cors("*"));
 app.use(express.json());
 
 // --- Multer setup ---
