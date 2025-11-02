@@ -12,8 +12,7 @@ app.use(express.json());
 const allowedOrigins = [
   "http://localhost:5000",
   "http://localhost:5173",
-  "https://joblensonline.vercel.app/",
-  "https://joblensonline.vercel.app//upload/resume",
+  "https://joblensonline.vercel.app",
 ];
 app.use(
   cors({
