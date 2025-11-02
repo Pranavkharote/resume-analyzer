@@ -8,23 +8,33 @@ const cors = require("cors");
 const app = express();
 app.use(express.json());
 
-// ✅ Allow your frontend origin only
+const cors = require("cors");
+
 const allowedOrigins = [
   "http://localhost:5000",
   "http://localhost:5173",
   "https://joblensonline.vercel.app",
 ];
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-  })
-);
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"], // include any custom headers you use
+  credentials: true,
+};
+
+// **Handle preflight requests explicitly**
+app.options("*", cors(corsOptions));
+
+// Apply CORS to all routes
+app.use(cors(corsOptions));
+
 // app.use(cors("*"));
 
 // --- Multer setup ---
