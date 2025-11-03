@@ -16,10 +16,15 @@ const allowedOrigins = [
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // allow requests with no origin like Postman or curl
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true);
+    if (
+      allowedOrigins.some((allowed) =>
+        allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
+      )
+    ) {
       callback(null, true);
     } else {
+      console.log("❌ Blocked by CORS:", origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
@@ -27,6 +32,7 @@ const corsOptions = {
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
 };
+
 
 const start = async () => {
   try{
@@ -40,7 +46,7 @@ const start = async () => {
 start();
 // Apply CORS globally **at the top**
 app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
+// app.options("/. */", cors(corsOptions));
 
 app.use(express.json());
 app.use("/users/auth", userAuth)
@@ -115,6 +121,7 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
       missingKeywords: [],
       feedback: [],
       strengths: [],
+      yourAdvice:[],
     };
 
     for (const chunk of chunks) {
@@ -128,7 +135,7 @@ Compare the candidate's resume with the provided job position and job descriptio
   "feedback": [list of strings],
   "strengths": [list of strings],
   "matchingSummary": string,
-  "jobRoleSuggestions: [list od strings]
+  "yourAdvice: [list of strings]
 }
 
 Guidelines:
