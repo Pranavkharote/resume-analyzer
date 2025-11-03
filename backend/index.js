@@ -10,18 +10,27 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://resumelensonline.vercel.app"
-]
+  "https://joblensonline.vercel.app",
+  /\.vercel\.app$/   // allows preview deploys
+];
 
-// app.use(cors({
-//   origin:allowedOrigins,
-//   credentials: true,
-// }))
-
-app.use("*")
+app.use(cors({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true); // Postman / curl
+    if (allowedOrigins.some(o => o instanceof RegExp ? o.test(origin) : o === origin)) {
+      return callback(null, true);
+    }
+    console.log("Blocked by CORS:", origin);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  methods: ["GET","POST","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"],
+  credentials: true
+}));
 
 app.use(express.json());
 app.use("/users/auth", userAuth);
+
 
 
 
