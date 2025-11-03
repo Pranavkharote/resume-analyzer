@@ -8,30 +8,31 @@ const mongoose = require("mongoose");
 const userAuth = require("./routes/user.routes")
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:5000",
-  "http://localhost:5173",
-  "https://joblensonline.vercel.app",
-];
-
-const corsOptions = {
+// 1️⃣ MUST be first
+app.use(cors({
   origin: function (origin, callback) {
-    if (!origin) return callback(null, true);
-    if (
-      allowedOrigins.some((allowed) =>
-        allowed instanceof RegExp ? allowed.test(origin) : allowed === origin
-      )
-    ) {
+    if (!origin) return callback(null, true); // Postman, curl, server-to-server
+    const allowed = [
+      "http://localhost:5173",
+      "https://joblensonline.vercel.app",
+      /\.vercel\.app$/   // allows preview deploys
+    ];
+    if (allowed.some(a => a instanceof RegExp ? a.test(origin) : a === origin)) {
       callback(null, true);
     } else {
-      console.log("❌ Blocked by CORS:", origin);
+      console.log("Blocked by CORS:", origin);
       callback(new Error("Not allowed by CORS"));
     }
   },
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
-};
+}));
+
+
+app.use(express.json());
+app.use("/users/auth", userAuth);
+
 
 
 const start = async () => {
@@ -44,15 +45,8 @@ const start = async () => {
 
 }
 start();
-// Apply CORS globally **at the top**
-app.use(cors(corsOptions));
-// app.options("/. */", cors(corsOptions));
 
-app.use(express.json());
-app.use("/users/auth", userAuth)
-// app.use(cors("*"));
 
-// --- Multer setup ---
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
