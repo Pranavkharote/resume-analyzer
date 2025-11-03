@@ -47,7 +47,7 @@ const handleDownloadReport = (data) => {
 
 const ResultDisplay = ({ data }) => {
   if (!data) return null;
-  const { atsScore, missingKeywords, feedback, strengths, jobRoleSuggestions } =
+  const { atsScore, missingKeywords, feedback, strengths, matchingSummary, yourAdvice } =
     data;
 
   return (
