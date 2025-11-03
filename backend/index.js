@@ -2,32 +2,22 @@ const express = require("express");
 const multer = require("multer");
 const pdfParse = require("pdf-parse");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-require("dotenv").config();
+("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userAuth = require("./routes/user.routes")
 const app = express();
 
-// 1️⃣ MUST be first
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // Postman, curl, server-to-server
-    const allowed = [
-      "http://localhost:5173",
-      "https://resumelensonline.vercel.app",
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://resumelensonline.vercel.app"
+]
 
-    ];
-    if (allowed.some(a => a instanceof RegExp ? a.test(origin) : a === origin)) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  methods: ["GET", "POST", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"],
+app.use(cors({
+  origin:allowedOrigins,
   credentials: true,
-}));
+}))
+
 
 
 app.use(express.json());
