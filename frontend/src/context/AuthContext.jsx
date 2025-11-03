@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 export const AuthContext = createContext({});
 
 const client = axios.create({
-  baseURL: "https://resumelensonline.vercel.app/user/auth",
+  baseURL: "https://resume-analyzer-mmz4.onrender.com/users/auth",
 });
 
 export const AuthProvider = ({ children }) => {
