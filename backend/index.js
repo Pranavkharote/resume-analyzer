@@ -13,12 +13,12 @@ const allowedOrigins = [
   "https://resumelensonline.vercel.app"
 ]
 
-app.use(cors({
-  origin:allowedOrigins,
-  credentials: true,
-}))
+// app.use(cors({
+//   origin:allowedOrigins,
+//   credentials: true,
+// }))
 
-
+app.use("*")
 
 app.use(express.json());
 app.use("/users/auth", userAuth);
