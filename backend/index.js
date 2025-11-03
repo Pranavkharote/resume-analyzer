@@ -14,8 +14,8 @@ app.use(cors({
     if (!origin) return callback(null, true); // Postman, curl, server-to-server
     const allowed = [
       "http://localhost:5173",
-      "https://joblensonline.vercel.app",
-      /\.vercel\.app$/   // allows preview deploys
+      "https://resumelensonline.vercel.app",
+
     ];
     if (allowed.some(a => a instanceof RegExp ? a.test(origin) : a === origin)) {
       callback(null, true);
