@@ -41,8 +41,12 @@ const handleDownloadReport = (data) => {
 
   addHeading("Strengths");
   addContent(data.strengths.length ? data.strengths.join("\n") : "None");
+  addHeading("matchingSummary");
+  addContent(data.matchingSummary.length ? data.matchingSummary.join("\n") : "None");
+  addHeading("yourAdvice");
+  addContent(data.yourAdvice.length ? data.yourAdvice.join("\n") : "None");
 
-  doc.save("Resume_Analysis.pdf");
+  doc.save("Resume_Analysis_by_Pranav.pdf");
 };
 
 const ResultDisplay = ({ data }) => {
