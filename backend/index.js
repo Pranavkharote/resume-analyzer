@@ -2,7 +2,7 @@ const express = require("express");
 const multer = require("multer");
 const pdfParse = require("pdf-parse");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
-("dotenv").config();
+require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
 const userAuth = require("./routes/user.routes")
