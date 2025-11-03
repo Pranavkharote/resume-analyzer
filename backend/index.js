@@ -4,7 +4,8 @@ const pdfParse = require("pdf-parse");
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 const cors = require("cors");
-
+const mongoose = require("mongoose");
+const userAuth = require("./routes/user.routes")
 const app = express();
 
 const allowedOrigins = [
@@ -27,12 +28,22 @@ const corsOptions = {
   credentials: true,
 };
 
-// Apply CORS globally **at the top**
-app.use(cors(corsOptions));
+const start = async () => {
+  try{
+    const connectDB = await mongoose.connect(process.env.MONGO_URI)
+    console.log("DB connected ")
+  } catch(err) {
+    console.error("DB connection failed", err.message)
+  }
 
-app.options("*", cors(corsOptions));
-// app.use(cors("*"));
+}
+start();
+// Apply CORS globally **at the top**
 app.use(express.json());
+app.use(cors(corsOptions));
+app.use("/users/auth", userAuth)
+// app.options("*", cors(corsOptions));
+// app.use(cors("*"));
 
 // --- Multer setup ---
 const storage = multer.memoryStorage();

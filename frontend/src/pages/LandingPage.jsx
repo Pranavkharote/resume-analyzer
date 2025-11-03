@@ -7,8 +7,19 @@ import { FaGithub } from "react-icons/fa";
 import { FaLinkedin } from "react-icons/fa";
 import { FaReact, FaNodeJs, FaDatabase } from "react-icons/fa";
 import { SiTailwindcss, SiMongodb, SiExpress } from "react-icons/si";
+import { useNavigate } from "react-router-dom";
 
 const LandingPage = () => {
+  const router = useNavigate();      
+  const isLoggedIn = () => {
+  const token = localStorage.getItem("token")
+
+  if(token){
+    router("/upload/resume");
+  } else {
+    router("/user/auth");
+  }
+}
   return (
     <div className="w-full bg-white text-gray-900">
       <GithubCorner href="https://github.com/pranavkharote/resume-analyzer" />
@@ -35,12 +46,13 @@ const LandingPage = () => {
           your next big opportunity.
         </motion.p>
 
-        <Link
-          to="/upload/resume"
+        <button
+        onClick={isLoggedIn}
+         
           className="bg-yellow-400 text-blue-900 font-semibold px-8 py-4 rounded-xl hover:bg-yellow-300 transition-all"
         >
           Try JobLens Free →
-        </Link>
+        </button>
       </section>
 
       {/* FEATURES SECTION */}
