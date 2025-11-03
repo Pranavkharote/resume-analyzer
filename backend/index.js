@@ -39,10 +39,11 @@ const start = async () => {
 }
 start();
 // Apply CORS globally **at the top**
-app.use(express.json());
 app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+app.use(express.json());
 app.use("/users/auth", userAuth)
-// app.options("*", cors(corsOptions));
 // app.use(cors("*"));
 
 // --- Multer setup ---
