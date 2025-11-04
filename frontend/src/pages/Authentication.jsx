@@ -96,10 +96,7 @@ export default function Authentication() {
         <CssBaseline />
 
         <Grid
-          item
-          xs={12}
-          sm={10}
-          md={6}
+         
           component={Paper}
           elevation={3}
           square

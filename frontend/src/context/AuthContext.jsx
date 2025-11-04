@@ -30,8 +30,9 @@ export const AuthProvider = ({ children }) => {
       const res = await client.post("/login", { email, password });
       if (res.status === httpStatus.OK) {
         localStorage.setItem("token", res.data.token);
+        console.log("Login called with:", email);
+
         setUserData(res.data.user);
-        
         return { success: true, message: res.data.message || "Login successful" };
       }
     } catch (err) {
