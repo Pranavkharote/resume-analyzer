@@ -49,6 +49,7 @@ const ResumeUpload = () => {
 
       setTimeout(() => {
         setResult(res.data);
+        console.log(result)
         setProgress(100);
       }, 500);
     } catch (error) {

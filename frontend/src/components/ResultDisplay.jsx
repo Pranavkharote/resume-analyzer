@@ -4,13 +4,26 @@ import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, Star, Briefcase } from "lucide-react";
 
+
 const handleDownloadReport = (data) => {
   if (!data) return;
+
   const doc = new jsPDF("p", "pt", "a4");
+  const pageHeight = doc.internal.pageSize.height;
   const margin = 40;
-  let y = 40;
+  const maxWidth = 500;
+  let y = 60;
+
+  // Helper function: check for overflow and add new page
+  const checkPageOverflow = (addedHeight = 0) => {
+    if (y + addedHeight > pageHeight - 60) {
+      doc.addPage();
+      y = 60;
+    }
+  };
 
   const addHeading = (text) => {
+    checkPageOverflow(30);
     doc.setFontSize(16);
     doc.setFont("helvetica", "bold");
     doc.text(text, margin, y);
@@ -18,36 +31,90 @@ const handleDownloadReport = (data) => {
   };
 
   const addContent = (text) => {
+    if (!text) text = "None";
+
     doc.setFontSize(12);
     doc.setFont("helvetica", "normal");
-    const lines = doc.splitTextToSize(text, 500);
-    doc.text(lines, margin, y);
-    y += lines.length * 14 + 15;
+
+    const lines = doc.splitTextToSize(text, maxWidth);
+    const lineHeight = 14;
+
+    for (let i = 0; i < lines.length; i++) {
+      checkPageOverflow(lineHeight);
+      doc.text(lines[i], margin, y);
+      y += lineHeight;
+    }
+
+    y += 10; // spacing after content block
   };
 
-  addHeading("AI Resume Analysis By JobLens");
-  addHeading("Developed by Pranav Kharote");
+  // === Header Section ===
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(18);
+  doc.text("AI Resume Analysis By JobLens", margin, y);
+  y += 25;
 
+  doc.setFont("helvetica", "normal");
+  doc.setFontSize(14);
+  doc.text("Developed by Pranav Kharote", margin, y);
+  y += 25;
+
+  // === Content Sections ===
   addHeading("ATS Score");
-  addContent(`${data.atsScore}% Match`);
+  addContent(`${data.atsScore || "N/A"}% Match`);
 
   addHeading("Missing Keywords");
   addContent(
-    data.missingKeywords.length ? data.missingKeywords.join(", ") : "None"
+    Array.isArray(data.missingKeywords)
+      ? data.missingKeywords.join(", ")
+      : data.missingKeywords || "None"
   );
 
   addHeading("Feedback");
-  addContent(data.feedback.length ? data.feedback.join("\n") : "None");
+  addContent(
+    Array.isArray(data.feedback)
+      ? data.feedback.join("\n")
+      : data.feedback || "None"
+  );
 
   addHeading("Strengths");
-  addContent(data.strengths.length ? data.strengths.join("\n") : "None");
-  addHeading("matchingSummary");
-  addContent(data.matchingSummary.length ? data.matchingSummary.join("\n") : "None");
-  addHeading("yourAdvice");
-  addContent(data.yourAdvice.length ? data.yourAdvice.join("\n") : "None");
+  addContent(
+    Array.isArray(data.strengths)
+      ? data.strengths.join("\n")
+      : data.strengths || "None"
+  );
+
+  addHeading("Matching Summary");
+  addContent(
+    Array.isArray(data.matchingSummary)
+      ? data.matchingSummary.join("\n")
+      : data.matchingSummary || "None"
+  );
+
+  addHeading("AI Advice");
+  addContent(
+    Array.isArray(data.yourAdvice)
+      ? data.yourAdvice.join("\n")
+      : data.yourAdvice || "None"
+  );
+
+  // === Add Page Numbers ===
+  const pageCount = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(10);
+    doc.text(
+      `Page ${i} of ${pageCount}`,
+      doc.internal.pageSize.getWidth() / 2,
+      pageHeight - 20,
+      { align: "center" }
+    );
+  }
 
   doc.save("Resume_Analysis_by_Pranav.pdf");
 };
+
+
 
 const ResultDisplay = ({ data }) => {
   if (!data) return null;
@@ -138,7 +205,7 @@ const ResultDisplay = ({ data }) => {
 
   {/* Your Advice */}
   <div className="mb-12">
-    <p className="text-xl font-semibold mb-4">Your Advice</p>
+    <p className="text-xl font-semibold mb-4">AI Advice</p>
     <ul className="list-disc list-inside bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200 text-gray-800">
       {yourAdvice?.length ? (
         yourAdvice.map((advice, i) => <li key={i}>{advice}</li>)
