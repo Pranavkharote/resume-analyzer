@@ -18,10 +18,16 @@ export const AuthProvider = ({ children }) => {
     try {
       const res = await client.post("/register", { name, email, password });
       if (res.status === httpStatus.CREATED) {
-        return { success: true, message: res.data.message || "Registered successfully" };
+        return {
+          success: true,
+          message: res.data.message || "Registered successfully",
+        };
       }
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || "Registration failed" };
+      return {
+        success: false,
+        message: err.response?.data?.message || "Registration failed",
+      };
     }
   };
 
@@ -33,10 +39,16 @@ export const AuthProvider = ({ children }) => {
         console.log("Login called with:", email);
 
         setUserData(res.data.user);
-        return { success: true, message: res.data.message || "Login successful" };
+        return {
+          success: true,
+          message: res.data.message || "Login successful",
+        };
       }
     } catch (err) {
-      return { success: false, message: err.response?.data?.message || "Login failed" };
+      return {
+        success: false,
+        message: err.response?.data?.message || "Login failed",
+      };
     }
   };
 

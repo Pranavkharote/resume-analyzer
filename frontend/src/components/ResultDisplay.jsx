@@ -4,7 +4,6 @@ import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, Star, Briefcase } from "lucide-react";
 
-
 const handleDownloadReport = (data) => {
   if (!data) return;
 
@@ -114,64 +113,108 @@ const handleDownloadReport = (data) => {
   doc.save("Resume_Analysis_by_Pranav.pdf");
 };
 
-
-
 const ResultDisplay = ({ data }) => {
   if (!data) return null;
-  const { atsScore, missingKeywords, feedback, strengths, matchingSummary, yourAdvice } =
-    data;
+  const {
+    atsScore,
+    missingKeywords,
+    feedback,
+    strengths,
+    matchingSummary,
+    yourAdvice,
+  } = data;
 
   return (
- <div className="max-w-6xl mx-auto mt-12 p-8 rounded-3xl bg-white text-gray-800 shadow-xl border border-gray-200">
-  <h2 className="text-4xl font-extrabold mb-10 text-center tracking-wide text-gray-900">
-    AI Resume Analysis
-  </h2>
+    <div className="max-w-5xl mx-auto mt-16">
 
-  {/* ATS Score */}
-  <div className="mb-12">
-    <p className="text-xl font-semibold mb-4">ATS Score</p>
-    <div className="w-full bg-gray-200 rounded-full h-6 overflow-hidden">
+  {/* Header Section */}
+  <div className="text-center mb-14">
+    <h2 className="text-4xl font-bold text-indigo-900 tracking-tight">
+      Resume Analysis Report
+    </h2>
+    <p className="text-indigo-600/70 mt-2">
+      Here is your AI-generated ATS and skill evaluation summary.
+    </p>
+  </div>
+
+  {/* ATS SCORE CARD */}
+  <div className="bg-white shadow-lg rounded-2xl border border-indigo-100 p-8 mb-12">
+    <p className="text-lg font-semibold text-indigo-900 mb-4">ATS Score</p>
+
+    <div className="w-full bg-indigo-100 rounded-full h-4 overflow-hidden">
       <div
-        className={`h-6 rounded-full transition-all duration-700 ${
-          atsScore > 80 ? "bg-green-600" : atsScore > 50 ? "bg-yellow-500" : "bg-red-500"
+        className={`h-4 rounded-full transition-all duration-700 ${
+          atsScore > 80
+            ? "bg-indigo-600"
+            : atsScore > 50
+            ? "bg-indigo-400"
+            : "bg-indigo-300"
         }`}
         style={{ width: `${atsScore}%` }}
       ></div>
     </div>
-    <p className="text-center mt-2 font-medium">{atsScore}% Match</p>
+
+    <p className="text-indigo-700 font-semibold text-center mt-3 text-lg">
+      {atsScore}% Match
+    </p>
   </div>
 
-  {/* Missing Keywords */}
-  <div className="mb-12">
-    <p className="text-xl font-semibold mb-6">Missing Keywords</p>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {missingKeywords?.length ? (
-        missingKeywords.map((kw, idx) => (
+  {/* GRID WRAPPER */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    {/* Missing Keywords */}
+    <div className="bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
+      <p className="text-lg font-semibold text-indigo-900 mb-5">Missing Keywords</p>
+
+      <div className="space-y-3">
+        {missingKeywords?.length ? (
+          missingKeywords.map((kw, idx) => (
+            <motion.div
+              key={idx}
+              whileHover={{ scale: 1.02 }}
+              className="flex items-center justify-between px-4 py-3 bg-indigo-50 rounded-xl border border-indigo-100"
+            >
+              <span className="text-indigo-900 font-medium">{kw}</span>
+              <XCircle size={20} className="text-indigo-500" />
+            </motion.div>
+          ))
+        ) : (
+          <div className="flex items-center gap-2 text-indigo-700 font-medium">
+            <CheckCircle size={20} /> All important keywords covered!
+          </div>
+        )}
+      </div>
+    </div>
+
+    {/* Strengths */}
+    <div className="bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
+      <p className="text-lg font-semibold text-indigo-900 mb-5">Strengths</p>
+
+      <div className="space-y-3">
+        {strengths?.map((s, idx) => (
           <motion.div
             key={idx}
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 p-4 bg-red-100 text-red-800 rounded-2xl shadow-sm font-semibold transition-all"
+            whileHover={{ scale: 1.02 }}
+            className="flex items-center justify-between px-4 py-3 bg-green-50 rounded-xl border border-green-100"
           >
-            <XCircle size={20} /> {kw}
+            <span className="text-green-900 font-medium">{s}</span>
+            <Star size={20} className="text-green-600" />
           </motion.div>
-        ))
-      ) : (
-        <div className="flex items-center gap-2 text-green-800 font-semibold">
-          <CheckCircle size={20} /> No missing keywords!
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   </div>
 
   {/* Feedback */}
-  <div className="mb-12">
-    <p className="text-xl font-semibold mb-6">Feedback</p>
+  <div className="mt-12 bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
+    <p className="text-lg font-semibold text-indigo-900 mb-5">AI Feedback</p>
+
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       {feedback?.map((f, i) => (
         <motion.div
           key={i}
-          whileHover={{ scale: 1.03 }}
-          className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200 text-gray-800 transition-all"
+          whileHover={{ scale: 1.01 }}
+          className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-900"
         >
           {f}
         </motion.div>
@@ -179,34 +222,22 @@ const ResultDisplay = ({ data }) => {
     </div>
   </div>
 
-  {/* Strengths */}
-  <div className="mb-12">
-    <p className="text-xl font-semibold mb-6">Strengths</p>
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {strengths?.map((s, i) => (
-        <motion.div
-          key={i}
-          whileHover={{ scale: 1.05 }}
-          className="flex items-center gap-2 p-4 bg-green-100 text-green-800 rounded-2xl shadow-sm font-semibold transition-all"
-        >
-          <Star size={20} /> {s}
-        </motion.div>
-      ))}
-    </div>
-  </div>
-
   {/* Matching Summary */}
-  <div className="mb-12">
-    <p className="text-xl font-semibold mb-4">Matching Summary</p>
-    <div className="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200 text-gray-800">
-      {matchingSummary?.length ? matchingSummary.join(" ") : "No summary available."}
+  <div className="mt-12 bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
+    <p className="text-lg font-semibold text-indigo-900 mb-5">Matching Summary</p>
+
+    <div className="bg-indigo-50 border border-indigo-100 p-5 rounded-xl text-indigo-900 leading-relaxed">
+      {matchingSummary?.length
+        ? matchingSummary.join(" ")
+        : "No summary available."}
     </div>
   </div>
 
-  {/* Your Advice */}
-  <div className="mb-12">
-    <p className="text-xl font-semibold mb-4">AI Advice</p>
-    <ul className="list-disc list-inside bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200 text-gray-800">
+  {/* Advice */}
+  <div className="mt-12 bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
+    <p className="text-lg font-semibold text-indigo-900 mb-5">Actionable Advice</p>
+
+    <ul className="list-disc list-inside space-y-2 text-indigo-900">
       {yourAdvice?.length ? (
         yourAdvice.map((advice, i) => <li key={i}>{advice}</li>)
       ) : (
@@ -215,15 +246,13 @@ const ResultDisplay = ({ data }) => {
     </ul>
   </div>
 
-  
-
-  {/* Download Button */}
+  {/* Download */}
   {data && (
-    <div className="text-center mt-8">
+    <div className="text-center mt-12">
       <motion.button
         whileHover={{ scale: 1.05 }}
         onClick={() => handleDownloadReport(data)}
-        className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-md transition-all"
+        className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-semibold shadow-lg hover:opacity-90 transition"
       >
         Download Report
       </motion.button>

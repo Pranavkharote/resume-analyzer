@@ -16,7 +16,7 @@ const App = () => {
           <Route path="/upload/resume" element={<ResumeUpload />} />
           <Route path="/user/auth" element={<Authentication />} />
         </Routes>
-          <ToastContainer
+        <ToastContainer
           position="bottom-right"
           autoClose={4000}
           hideProgressBar={false}

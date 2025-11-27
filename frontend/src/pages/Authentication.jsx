@@ -54,7 +54,6 @@ export default function Authentication() {
     let result;
 
     if (formState === 0) {
-   
       result = await handleLogin(email, password);
       if (result.success) {
         toast.success(result.message);
@@ -96,7 +95,6 @@ export default function Authentication() {
         <CssBaseline />
 
         <Grid
-         
           component={Paper}
           elevation={3}
           square

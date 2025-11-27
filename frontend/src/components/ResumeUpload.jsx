@@ -28,7 +28,7 @@ const ResumeUpload = () => {
 
     try {
       setLoading(true);
-      setProgress(10);
+      setProgress(10); 
 
       const res = await axios.post(
         "https://resume-analyzer-mmz4.onrender.com/upload",
@@ -38,7 +38,7 @@ const ResumeUpload = () => {
           onUploadProgress: (e) =>
             setProgress(Math.round((e.loaded * 100) / e.total)),
         }
-      );
+      ); 
 
       setProgress(90);
 
@@ -49,7 +49,7 @@ const ResumeUpload = () => {
 
       setTimeout(() => {
         setResult(res.data);
-        console.log(result)
+        console.log(result);
         setProgress(100);
       }, 500);
     } catch (error) {
@@ -64,116 +64,129 @@ const ResumeUpload = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-400 via-blue-400 to-red-200 text-white px-4 py-12">
-      <motion.h1
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="text-4xl md:text-5xl font-extrabold mb-8 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-800 to-cyan-800"
-      >
-        AI Resume Analyzer
-      </motion.h1>
+   <div className="min-h-screen w-full flex flex-col items-center bg-gradient-to-br from-blue-50 to-indigo-100 px-6 py-16">
 
-      <p className="text-gray-200 text-center mb-8 max-w-2xl">
-        Upload your resume for a comprehensive AI-driven analysis. Job title and
-        description are optional but can enhance result precision.
-      </p>
+  {/* Title */}
+  <motion.h1
+    initial={{ opacity: 0, y: -10 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.4 }}
+    className="text-4xl md:text-5xl font-bold text-indigo-900 tracking-tight"
+  >
+    AI Resume Analyzer
+  </motion.h1>
 
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="bg-gray-800/60 backdrop-blur-xl border border-gray-700 p-8 rounded-3xl shadow-2xl w-full max-w-6xl flex flex-col md:flex-row gap-6 items-start"
-      >
-        {/* Resume Upload */}
-        <div className="flex-1 flex flex-col items-center w-full">
-          <label className="mb-2 text-sm font-medium text-gray-300">
-            Upload Your Resume <span className="text-red-500">*</span>
-          </label>
-          <label
-            htmlFor="dropzone-file"
-            className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-gray-500 rounded-xl cursor-pointer bg-gray-900/50 hover:bg-gray-800 transition-colors"
-          >
-            <div className="flex flex-col items-center justify-center">
-              <svg
-                className="w-10 h-10 mb-2 text-gray-400"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 16v4h16v-4M12 12V3m0 0L8 7m4-4 4 4"
-                />
-              </svg>
-              <p className="text-gray-300 font-medium text-center">
-                {!file ? "Click or drag to upload (PDF only)" : file.name}
-              </p>
-            </div>
-            <input
-              id="dropzone-file"
-              type="file"
-              accept=".pdf"
-              onChange={(e) => setFile(e.target.files[0])}
-              className="hidden"
-            />
-          </label>
-        </div>
+  <p className="text-indigo-700/70 text-center mt-3 max-w-2xl">
+    Upload your resume for an AI-powered ATS and job-match analysis.
+  </p>
 
-        {/* Job Position & Description */}
-        <div className="flex-1 flex flex-col gap-4 w-full">
-          <input
-            placeholder="Job Position (Optional)"
-            value={jobPosition}
-            onChange={(e) => setJobPosition(e.target.value)}
-            className="w-full p-3 rounded-xl bg-gray-900/50 border border-gray-600 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
-          />
-          <textarea
-            rows={6}
-            placeholder="Job Description (Optional)"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-3 rounded-xl bg-gray-900/50 border border-gray-600 text-gray-200 placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all"
-          />
-        </div>
-      </motion.div>
+  {/* Main Card */}
+  <motion.div
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.5 }}
+    className="mt-10 w-full max-w-5xl bg-white rounded-2xl p-10 shadow-xl border border-indigo-100"
+  >
+    <div className="grid md:grid-cols-2 gap-10">
 
-      <motion.button
-        onClick={handleUpload}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="mt-8 w-full max-w-md py-3 font-semibold rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 hover:opacity-90 transition-all"
-      >
-        {loading ? "Analyzing..." : "Upload & Analyze"}
-      </motion.button>
+      {/* Upload Section */}
+      <div>
+        <label className="mb-2 block text-sm font-medium text-indigo-800/80">
+          Upload Resume (PDF)
+        </label>
 
-      {loading && (
-        <div className="mt-6 flex flex-col items-center justify-center gap-4">
-          <div className="w-24 h-24">
-            <CircularProgressbar
-              value={progress}
-              text={`${progress}%`}
-              styles={buildStyles({
-                textColor: "#fff",
-                pathColor: "#3b82f6",
-                trailColor: "#1f2937",
-              })}
-            />
+        <label
+          htmlFor="dropzone-file"
+          className="flex flex-col items-center justify-center w-full h-52 rounded-xl border-2 border-dashed border-indigo-300 bg-indigo-50/40 hover:bg-indigo-50 transition cursor-pointer"
+        >
+          <div className="flex flex-col items-center">
+            <svg
+              className="w-12 h-12 mb-2 text-indigo-400"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={1.5}
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round"
+                d="M12 4v16m8-8H4" />
+            </svg>
+
+            <p className="text-indigo-600 font-medium">
+              {file ? file.name : "Click or drag your resume here"}
+            </p>
+            <p className="text-indigo-400 text-xs">PDF only</p>
           </div>
-          <p className="text-sm text-gray-400 animate-pulse">
-            Analyzing your resume with AI...
-          </p>
-        </div>
-      )}
 
-      {result && <ResultDisplay data={result} />}
+          <input
+            id="dropzone-file"
+            type="file"
+            accept=".pdf"
+            onChange={(e) => setFile(e.target.files[0])}
+            className="hidden"
+          />
+        </label>
+      </div>
 
-      <ToastContainer />
+      {/* Job Details */}
+      <div className="flex flex-col gap-4">
+        <input
+          placeholder="Job Position (Optional)"
+          value={jobPosition}
+          onChange={(e) => setJobPosition(e.target.value)}
+          className="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50/50 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+
+        <textarea
+          rows={6}
+          placeholder="Job Description (Optional)"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          className="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50/50 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
+        />
+      </div>
+
     </div>
+
+    {/* Analyze Button */}
+    <motion.button
+      onClick={handleUpload}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4, delay: 0.2 }}
+      className="mt-10 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold hover:opacity-90 transition"
+    >
+      {loading ? "Analyzing..." : "Upload & Analyze"}
+    </motion.button>
+
+    {/* Progress */}
+    {loading && (
+      <div className="mt-8 flex flex-col items-center gap-3">
+        <div className="w-24 h-24">
+          <CircularProgressbar
+            value={progress}
+            text={`${progress}%`}
+            styles={buildStyles({
+              textColor: "#4f46e5",
+              pathColor: "#6366f1",
+              trailColor: "#e0e7ff",
+            })}
+          />
+        </div>
+
+        <p className="text-indigo-600/70 text-sm">Analyzing your resume...</p>
+      </div>
+    )}
+
+    {result && (
+      <div className="mt-10">
+        <ResultDisplay data={result} />
+      </div>
+    )}
+  </motion.div>
+
+  <ToastContainer />
+</div>
+
   );
 };
 
