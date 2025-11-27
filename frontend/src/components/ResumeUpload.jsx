@@ -64,87 +64,74 @@ const ResumeUpload = () => {
   };
 
   return (
-   <div className="min-h-screen w-full flex flex-col items-center bg-gradient-to-br from-blue-50 to-indigo-100 px-6 py-16">
+   <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 to-indigo-100 px-6 py-20">
 
-  {/* Title */}
-  <motion.h1
-    initial={{ opacity: 0, y: -10 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.4 }}
-    className="text-4xl md:text-5xl font-bold text-indigo-900 tracking-tight"
-  >
-    AI Resume Analyzer
-  </motion.h1>
+  {/* Hero Section */}
+  <div className="text-center mb-16">
+    <motion.h1
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4 }}
+      className="text-5xl font-extrabold text-indigo-900 tracking-tight"
+    >
+      AI Resume Analyzer
+    </motion.h1>
 
-  <p className="text-indigo-700/70 text-center mt-3 max-w-2xl">
-    Upload your resume for an AI-powered ATS and job-match analysis.
-  </p>
+    <p className="text-indigo-700/80 mt-3 text-lg max-w-2xl mx-auto">
+      Upload your resume and let our AI evaluate your ATS score, strengths, missing
+      keywords, and job-match recommendations.
+    </p>
+  </div>
 
-  {/* Main Card */}
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.5 }}
-    className="mt-10 w-full max-w-5xl bg-white rounded-2xl p-10 shadow-xl border border-indigo-100"
-  >
-    <div className="grid md:grid-cols-2 gap-10">
+  {/* Upload Area + Inputs */}
+  <div className="max-w-4xl mx-auto">
 
-      {/* Upload Section */}
-      <div>
-        <label className="mb-2 block text-sm font-medium text-indigo-800/80">
-          Upload Resume (PDF)
-        </label>
+    {/* Upload Dropzone */}
+    <label
+      htmlFor="dropzone-file"
+      className="flex flex-col items-center justify-center h-60 rounded-2xl border-2 border-dashed border-indigo-300 bg-white/70 backdrop-blur-xl hover:bg-white/80 transition cursor-pointer"
+    >
+      <svg
+        className="w-14 h-14 text-indigo-400 mb-3"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth={1.5}
+        viewBox="0 0 24 24"
+      >
+        <path strokeLinecap="round" strokeLinejoin="round"
+          d="M12 4v16m8-8H4"/>
+      </svg>
 
-        <label
-          htmlFor="dropzone-file"
-          className="flex flex-col items-center justify-center w-full h-52 rounded-xl border-2 border-dashed border-indigo-300 bg-indigo-50/40 hover:bg-indigo-50 transition cursor-pointer"
-        >
-          <div className="flex flex-col items-center">
-            <svg
-              className="w-12 h-12 mb-2 text-indigo-400"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.5}
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round"
-                d="M12 4v16m8-8H4" />
-            </svg>
+      <p className="text-indigo-700 font-medium text-lg">
+        {file ? file.name : "Click or drag your resume here"}
+      </p>
+      <p className="text-indigo-500 text-sm mt-1">PDF only • Max 5MB</p>
 
-            <p className="text-indigo-600 font-medium">
-              {file ? file.name : "Click or drag your resume here"}
-            </p>
-            <p className="text-indigo-400 text-xs">PDF only</p>
-          </div>
+      <input
+        type="file"
+        id="dropzone-file"
+        accept=".pdf"
+        onChange={(e) => setFile(e.target.files[0])}
+        className="hidden"
+      />
+    </label>
 
-          <input
-            id="dropzone-file"
-            type="file"
-            accept=".pdf"
-            onChange={(e) => setFile(e.target.files[0])}
-            className="hidden"
-          />
-        </label>
-      </div>
+    {/* Job Inputs Inline - Futuristic */}
+    <div className="mt-10 grid md:grid-cols-2 gap-6">
+      <input
+        placeholder="Job Position (Optional)"
+        value={jobPosition}
+        onChange={(e) => setJobPosition(e.target.value)}
+        className="w-full py-3 px-4 rounded-xl bg-white/60 backdrop-blur-xl border border-indigo-200 text-indigo-900 focus:ring-2 focus:ring-indigo-400 outline-none"
+      />
 
-      {/* Job Details */}
-      <div className="flex flex-col gap-4">
-        <input
-          placeholder="Job Position (Optional)"
-          value={jobPosition}
-          onChange={(e) => setJobPosition(e.target.value)}
-          className="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50/50 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400"
-        />
-
-        <textarea
-          rows={6}
-          placeholder="Job Description (Optional)"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className="w-full p-3 rounded-xl border border-indigo-200 bg-indigo-50/50 text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 resize-none"
-        />
-      </div>
-
+      <textarea
+        rows={4}
+        placeholder="Job Description (Optional)"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        className="w-full py-3 px-4 rounded-xl bg-white/60 backdrop-blur-xl border border-indigo-200 text-indigo-900 focus:ring-2 focus:ring-indigo-400 outline-none resize-none"
+      />
     </div>
 
     {/* Analyze Button */}
@@ -153,39 +140,35 @@ const ResumeUpload = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4, delay: 0.2 }}
-      className="mt-10 w-full py-3 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold hover:opacity-90 transition"
+      className="mt-10 w-full py-4 rounded-xl bg-gradient-to-r from-indigo-500 to-blue-500 text-white font-semibold text-lg hover:opacity-90 transition shadow-md"
     >
       {loading ? "Analyzing..." : "Upload & Analyze"}
     </motion.button>
 
-    {/* Progress */}
+    {/* Futuristic Loader */}
     {loading && (
-      <div className="mt-8 flex flex-col items-center gap-3">
-        <div className="w-24 h-24">
-          <CircularProgressbar
-            value={progress}
-            text={`${progress}%`}
-            styles={buildStyles({
-              textColor: "#4f46e5",
-              pathColor: "#6366f1",
-              trailColor: "#e0e7ff",
-            })}
-          />
+      <div className="mt-10 flex flex-col items-center">
+        <div className="relative w-28 h-28">
+          <div className="absolute inset-0 rounded-full border-4 border-indigo-300 border-t-indigo-600 animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center text-indigo-700 font-semibold text-lg">
+            {progress}%
+          </div>
         </div>
-
-        <p className="text-indigo-600/70 text-sm">Analyzing your resume...</p>
+        <p className="mt-3 text-indigo-600/70">Analyzing your resume...</p>
       </div>
     )}
 
+    {/* Results */}
     {result && (
-      <div className="mt-10">
+      <div className="mt-14">
         <ResultDisplay data={result} />
       </div>
     )}
-  </motion.div>
+  </div>
 
   <ToastContainer />
 </div>
+
 
   );
 };
