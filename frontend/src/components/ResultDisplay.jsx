@@ -125,139 +125,139 @@ const ResultDisplay = ({ data }) => {
   } = data;
 
   return (
-    <div className="max-w-5xl mx-auto mt-16">
+    <div className="max-w-5xl mx-auto py-8">
 
-  {/* Header Section */}
-  <div className="text-center mb-14">
-    <h2 className="text-4xl font-bold text-indigo-900 tracking-tight">
-      Resume Analysis Report
-    </h2>
-    <p className="text-indigo-600/70 mt-2">
-      Here is your AI-generated ATS and skill evaluation summary.
+  {/* HEADER */}
+  <div className="mb-8 border-b pb-4">
+    <h2 className="text-3xl font-semibold text-gray-900">Analysis Report</h2>
+    <p className="text-gray-500 text-sm mt-1">
+      Generated using AI-powered resume evaluation system
     </p>
   </div>
 
-  {/* ATS SCORE CARD */}
-  <div className="bg-white shadow-lg rounded-2xl border border-indigo-100 p-8 mb-12">
-    <p className="text-lg font-semibold text-indigo-900 mb-4">ATS Score</p>
+  {/* TOP SUMMARY ROW */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
 
-    <div className="w-full bg-indigo-100 rounded-full h-4 overflow-hidden">
-      <div
-        className={`h-4 rounded-full transition-all duration-700 ${
-          atsScore > 80
-            ? "bg-indigo-600"
-            : atsScore > 50
-            ? "bg-indigo-400"
-            : "bg-indigo-300"
-        }`}
-        style={{ width: `${atsScore}%` }}
-      ></div>
+    {/* ATS SCORE */}
+    <div className="p-5 border rounded-lg bg-white shadow-sm">
+      <p className="text-sm text-gray-600 mb-1">ATS Score</p>
+      <p className="text-3xl font-bold text-indigo-600">{atsScore}%</p>
+      <div className="w-full h-2 bg-gray-200 rounded mt-3 overflow-hidden">
+        <div
+          style={{ width: `${atsScore}%` }}
+          className="h-2 bg-indigo-500 rounded"
+        ></div>
+      </div>
     </div>
 
-    <p className="text-indigo-700 font-semibold text-center mt-3 text-lg">
-      {atsScore}% Match
-    </p>
+    {/* KEYWORDS COUNT */}
+    <div className="p-5 border rounded-lg bg-white shadow-sm">
+      <p className="text-sm text-gray-600 mb-1">Missing Keywords</p>
+      <p className="text-xl font-semibold text-red-600">
+        {missingKeywords?.length || 0}
+      </p>
+    </div>
+
+    {/* STRENGTH COUNT */}
+    <div className="p-5 border rounded-lg bg-white shadow-sm">
+      <p className="text-sm text-gray-600 mb-1">Strength Areas</p>
+      <p className="text-xl font-semibold text-green-600">
+        {strengths?.length || 0}
+      </p>
+    </div>
   </div>
 
-  {/* GRID WRAPPER */}
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+  {/* TWO-COLUMN MAIN SECTION */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    {/* Missing Keywords */}
-    <div className="bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
-      <p className="text-lg font-semibold text-indigo-900 mb-5">Missing Keywords</p>
+    {/* LEFT COLUMN */}
+    <div className="col-span-1 space-y-6">
 
-      <div className="space-y-3">
-        {missingKeywords?.length ? (
-          missingKeywords.map((kw, idx) => (
-            <motion.div
+      {/* Missing Keywords */}
+      <div className="border rounded-lg bg-white shadow-sm p-5">
+        <p className="font-medium text-gray-800 mb-3">Missing Keywords</p>
+        <div className="space-y-2">
+          {missingKeywords?.length ? (
+            missingKeywords.map((kw, idx) => (
+              <div
+                key={idx}
+                className="text-sm flex items-center justify-between p-2 bg-red-50 border border-red-100 rounded"
+              >
+                <span className="text-red-700">{kw}</span>
+                <XCircle size={18} className="text-red-500" />
+              </div>
+            ))
+          ) : (
+            <p className="text-green-600 text-sm">No missing keywords 🎉</p>
+          )}
+        </div>
+      </div>
+
+      {/* Strengths */}
+      <div className="border rounded-lg bg-white shadow-sm p-5">
+        <p className="font-medium text-gray-800 mb-3">Strengths</p>
+        <div className="space-y-2">
+          {strengths?.map((s, idx) => (
+            <div
               key={idx}
-              whileHover={{ scale: 1.02 }}
-              className="flex items-center justify-between px-4 py-3 bg-indigo-50 rounded-xl border border-indigo-100"
+              className="text-sm flex items-center justify-between p-2 bg-green-50 border border-green-100 rounded"
             >
-              <span className="text-indigo-900 font-medium">{kw}</span>
-              <XCircle size={20} className="text-indigo-500" />
-            </motion.div>
-          ))
-        ) : (
-          <div className="flex items-center gap-2 text-indigo-700 font-medium">
-            <CheckCircle size={20} /> All important keywords covered!
-          </div>
-        )}
+              <span className="text-green-800">{s}</span>
+              <Star size={18} className="text-green-600" />
+            </div>
+          ))}
+        </div>
       </div>
     </div>
 
-    {/* Strengths */}
-    <div className="bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
-      <p className="text-lg font-semibold text-indigo-900 mb-5">Strengths</p>
+    {/* RIGHT WIDE COLUMN */}
+    <div className="col-span-2 space-y-6">
 
-      <div className="space-y-3">
-        {strengths?.map((s, idx) => (
-          <motion.div
-            key={idx}
-            whileHover={{ scale: 1.02 }}
-            className="flex items-center justify-between px-4 py-3 bg-green-50 rounded-xl border border-green-100"
-          >
-            <span className="text-green-900 font-medium">{s}</span>
-            <Star size={20} className="text-green-600" />
-          </motion.div>
-        ))}
+      {/* FEEDBACK */}
+      <div className="border rounded-lg bg-white shadow-sm p-5">
+        <p className="font-medium text-gray-800 mb-3">Detailed Feedback</p>
+        <div className="space-y-3">
+          {feedback?.map((f, i) => (
+            <div key={i} className="p-3 text-sm bg-gray-50 rounded border">
+              {f}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* SUMMARY */}
+      <div className="border rounded-lg bg-white shadow-sm p-5">
+        <p className="font-medium text-gray-800 mb-3">Matching Summary</p>
+        <p className="text-sm text-gray-700 leading-relaxed">
+          {matchingSummary?.length
+            ? matchingSummary.join(" ")
+            : "No summary available."}
+        </p>
+      </div>
+
+      {/* ADVICE */}
+      <div className="border rounded-lg bg-white shadow-sm p-5">
+        <p className="font-medium text-gray-800 mb-3">Actionable Advice</p>
+        <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
+          {yourAdvice?.length ? (
+            yourAdvice.map((a, i) => <li key={i}>{a}</li>)
+          ) : (
+            <li>No advice available.</li>
+          )}
+        </ul>
       </div>
     </div>
   </div>
 
-  {/* Feedback */}
-  <div className="mt-12 bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
-    <p className="text-lg font-semibold text-indigo-900 mb-5">AI Feedback</p>
-
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {feedback?.map((f, i) => (
-        <motion.div
-          key={i}
-          whileHover={{ scale: 1.01 }}
-          className="p-4 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-900"
-        >
-          {f}
-        </motion.div>
-      ))}
-    </div>
+  {/* DOWNLOAD BUTTON */}
+  <div className="text-center mt-10">
+    <button
+      onClick={() => handleDownloadReport(data)}
+      className="px-6 py-2.5 rounded-md bg-indigo-600 text-white font-medium shadow hover:bg-indigo-700"
+    >
+      Download Report
+    </button>
   </div>
-
-  {/* Matching Summary */}
-  <div className="mt-12 bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
-    <p className="text-lg font-semibold text-indigo-900 mb-5">Matching Summary</p>
-
-    <div className="bg-indigo-50 border border-indigo-100 p-5 rounded-xl text-indigo-900 leading-relaxed">
-      {matchingSummary?.length
-        ? matchingSummary.join(" ")
-        : "No summary available."}
-    </div>
-  </div>
-
-  {/* Advice */}
-  <div className="mt-12 bg-white shadow-lg rounded-2xl border border-indigo-100 p-8">
-    <p className="text-lg font-semibold text-indigo-900 mb-5">Actionable Advice</p>
-
-    <ul className="list-disc list-inside space-y-2 text-indigo-900">
-      {yourAdvice?.length ? (
-        yourAdvice.map((advice, i) => <li key={i}>{advice}</li>)
-      ) : (
-        <li>No advice available.</li>
-      )}
-    </ul>
-  </div>
-
-  {/* Download */}
-  {data && (
-    <div className="text-center mt-12">
-      <motion.button
-        whileHover={{ scale: 1.05 }}
-        onClick={() => handleDownloadReport(data)}
-        className="px-8 py-3 rounded-xl bg-gradient-to-r from-indigo-600 to-blue-500 text-white font-semibold shadow-lg hover:opacity-90 transition"
-      >
-        Download Report
-      </motion.button>
-    </div>
-  )}
 </div>
 
   );
