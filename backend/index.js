@@ -99,10 +99,28 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
     if (!resumeText)
       return res.status(400).json({ error: "No readable text found in PDF" });
 
-    const model = genAI.getGenerativeModel({
-      model: "models/gemini-2.5-flash",
-    });
-    const chunks = chunkText(resumeText, 2000);
+   const model = genAI.getGenerativeModel({
+   model: "models/gemini-2.5-flash"
+});
+
+    // const chunks = chunkText(resumeText, 2000);
+    const MAX_CHUNKS = 3;
+    const chunks = chunkText(resumeText, 2000).slice(0, MAX_CHUNKS);
+
+    async function generateWithRetry(model, prompt, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      return await model.generateContent(prompt);
+    } catch (err) {
+      if (err.message.includes("503") && i < retries - 1) {
+        await new Promise(res => setTimeout(res, 1000 * (i + 1)));
+      } else {
+        throw err;
+      }
+    }
+  }
+}
+
 
     const finalResult = {
       atsScore: 0,
@@ -146,7 +164,8 @@ Resume:
 ${chunk}
       `;
 
-      const result = await model.generateContent(prompt);
+     const result = await generateWithRetry(model, prompt);
+
       let text = result.response
         .text()
         .replace(/```json|```/g, "")
@@ -175,10 +194,15 @@ ${chunk}
     finalResult.yourAdvice = [...new Set(finalResult.yourAdvice)];
 
     res.json(finalResult);
-  } catch (error) {
-    console.error("❌ Error analyzing resume:", error);
-    res.status(500).json({ error: "Failed to analyze resume" });
-  }
+ } catch (error) {
+  console.error("❌ Error analyzing resume:", error);
+  res.status(500).json({
+    error: "Failed to analyze resume",
+    details: error.message,
+    stack: error.stack
+  });
+}
+
 });
 
 // --- Start Server ---
