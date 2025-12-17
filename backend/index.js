@@ -5,54 +5,53 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 require("dotenv").config();
 const cors = require("cors");
 const mongoose = require("mongoose");
-const userAuth = require("./routes/user.routes")
+const userAuth = require("./routes/user.routes");
 const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
   "https://joblensonline.vercel.app",
-  /\.vercel\.app$/   // allows preview deploys
+  /\.vercel\.app$/, // allows preview deploys
 ];
 
-app.use(cors({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true); // Postman / curl
-    if (allowedOrigins.some(o => o instanceof RegExp ? o.test(origin) : o === origin)) {
-      return callback(null, true);
-    }
-    console.log("Blocked by CORS:", origin);
-    return callback(new Error("Not allowed by CORS"));
-  },
-  methods: ["GET","POST","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // Postman / curl
+      if (
+        allowedOrigins.some((o) =>
+          o instanceof RegExp ? o.test(origin) : o === origin
+        )
+      ) {
+        return callback(null, true);
+      }
+      console.log("Blocked by CORS:", origin);
+      return callback(new Error("Not allowed by CORS"));
+    },
+    methods: ["GET", "POST", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
 
 app.use(express.json());
 app.use("/users/auth", userAuth);
 
-
-
-
 const start = async () => {
-  try{
-    const connectDB = await mongoose.connect(process.env.MONGO_URI)
-    console.log("DB connected ")
-  } catch(err) {
-    console.error("DB connection failed", err.message)
+  try {
+    const connectDB = await mongoose.connect(process.env.MONGO_URI);
+    console.log("DB connected ");
+  } catch (err) {
+    console.error("DB connection failed", err.message);
   }
-
-}
+};
 start();
-
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-// --- Gemini setup ---
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-// --- Helper: split resume into chunks ---
 function chunkText(text, maxLength = 2000) {
   const words = text.split(/\s+/);
   const chunks = [];
@@ -72,7 +71,6 @@ function chunkText(text, maxLength = 2000) {
   return chunks;
 }
 
-// --- Helper: safely parse JSON ---
 function safeJSONParse(str) {
   try {
     return JSON.parse(str);
@@ -88,7 +86,6 @@ function safeJSONParse(str) {
   }
 }
 
-// --- Upload + AI Review Route ---
 app.post("/upload", upload.single("resume"), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: "No file uploaded" });
@@ -99,9 +96,12 @@ app.post("/upload", upload.single("resume"), async (req, res) => {
 
     const pdfData = await pdfParse(req.file.buffer);
     const resumeText = pdfData.text?.trim();
-    if (!resumeText) return res.status(400).json({ error: "No readable text found in PDF" });
+    if (!resumeText)
+      return res.status(400).json({ error: "No readable text found in PDF" });
 
-    const model = genAI.getGenerativeModel({ model: "models/gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({
+      model: "models/gemini-2.5-flash",
+    });
     const chunks = chunkText(resumeText, 2000);
 
     const finalResult = {
@@ -147,15 +147,20 @@ ${chunk}
       `;
 
       const result = await model.generateContent(prompt);
-      let text = result.response.text().replace(/```json|```/g, "").trim();
+      let text = result.response
+        .text()
+        .replace(/```json|```/g, "")
+        .trim();
       const parsed = safeJSONParse(text);
 
       // Merge results correctly
       if (parsed.atsScore) finalResult.atsScore += parsed.atsScore;
-      if (parsed.missingKeywords) finalResult.missingKeywords.push(...parsed.missingKeywords);
+      if (parsed.missingKeywords)
+        finalResult.missingKeywords.push(...parsed.missingKeywords);
       if (parsed.feedback) finalResult.feedback.push(...parsed.feedback);
       if (parsed.strengths) finalResult.strengths.push(...parsed.strengths);
-      if (parsed.matchingSummary) finalResult.matchingSummary.push(parsed.matchingSummary);
+      if (parsed.matchingSummary)
+        finalResult.matchingSummary.push(parsed.matchingSummary);
       if (parsed.yourAdvice) finalResult.yourAdvice.push(...parsed.yourAdvice);
     }
 
@@ -175,7 +180,6 @@ ${chunk}
     res.status(500).json({ error: "Failed to analyze resume" });
   }
 });
-
 
 // --- Start Server ---
 const PORT = process.env.PORT || 5000;

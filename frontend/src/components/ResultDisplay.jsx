@@ -44,10 +44,9 @@ const handleDownloadReport = (data) => {
       y += lineHeight;
     }
 
-    y += 10; // spacing after content block
+    y += 10; // 
   };
-
-  // === Header Section ===
+ 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
   doc.text("AI Resume Analysis By JobLens", margin, y);
@@ -57,8 +56,7 @@ const handleDownloadReport = (data) => {
   doc.setFontSize(14);
   doc.text("Developed by Pranav Kharote", margin, y);
   y += 25;
-
-  // === Content Sections ===
+ 
   addHeading("ATS Score");
   addContent(`${data.atsScore || "N/A"}% Match`);
 
@@ -96,8 +94,7 @@ const handleDownloadReport = (data) => {
       ? data.yourAdvice.join("\n")
       : data.yourAdvice || "None"
   );
-
-  // === Add Page Numbers ===
+ 
   const pageCount = doc.internal.getNumberOfPages();
   for (let i = 1; i <= pageCount; i++) {
     doc.setPage(i);
@@ -134,11 +131,9 @@ const ResultDisplay = ({ data }) => {
       Generated using AI-powered resume evaluation system
     </p>
   </div>
-
-  {/* TOP SUMMARY ROW */}
+ 
   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-
-    {/* ATS SCORE */}
+ 
     <div className="p-5 border rounded-lg bg-white shadow-sm">
       <p className="text-sm text-gray-600 mb-1">ATS Score</p>
       <p className="text-3xl font-bold text-indigo-600">{atsScore}%</p>
