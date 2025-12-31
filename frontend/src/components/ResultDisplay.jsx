@@ -3,6 +3,7 @@ import React from "react";
 import jsPDF from "jspdf";
 import { motion } from "framer-motion";
 import { CheckCircle, XCircle, Star, Briefcase } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 
 const handleDownloadReport = (data) => {
   if (!data) return;
@@ -13,7 +14,7 @@ const handleDownloadReport = (data) => {
   const maxWidth = 500;
   let y = 60;
 
-  // Helper function: check for overflow and add new page
+   
   const checkPageOverflow = (addedHeight = 0) => {
     if (y + addedHeight > pageHeight - 60) {
       doc.addPage();
@@ -49,7 +50,7 @@ const handleDownloadReport = (data) => {
  
   doc.setFont("helvetica", "bold");
   doc.setFontSize(18);
-  doc.text("AI Resume Analysis By JobLens", margin, y);
+  doc.text("AI Resume Analysis By ResumeLens", margin, y);
   y += 25;
 
   doc.setFont("helvetica", "normal");
@@ -57,8 +58,10 @@ const handleDownloadReport = (data) => {
   doc.text("Developed by Pranav Kharote", margin, y);
   y += 25;
  
+  console.log(data);
+
   addHeading("ATS Score");
-  addContent(`${data.atsScore || "N/A"}% Match`);
+  addContent(`${data.ats || "N/A"}% Match`);
 
   addHeading("Missing Keywords");
   addContent(
@@ -122,55 +125,79 @@ const ResultDisplay = ({ data }) => {
   } = data;
 
   return (
-    <div className="max-w-5xl mx-auto py-8">
+   <div className="max-w-5xl mx-auto py-8">
 
-  {/* HEADER */}
-  <div className="mb-8 border-b pb-4">
-    <h2 className="text-3xl font-semibold text-gray-900">Analysis Report</h2>
+  {/* Header */}
+  <div className="mb-10 border-b pb-4">
+    <h2 className="text-3xl font-semibold text-gray-900">
+      Resume Analysis Report
+    </h2>
     <p className="text-gray-500 text-sm mt-1">
-      Generated using AI-powered resume evaluation system
+      AI-generated insights based on ATS-style resume evaluation
     </p>
   </div>
- 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
- 
-    <div className="p-5 border rounded-lg bg-white shadow-sm">
-      <p className="text-sm text-gray-600 mb-1">ATS Score</p>
-      <p className="text-3xl font-bold text-indigo-600">{atsScore}%</p>
-      <div className="w-full h-2 bg-gray-200 rounded mt-3 overflow-hidden">
+
+  {/* Top Metrics */}
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+
+    {/* ATS Score */}
+    <div className="p-5 border rounded-lg bg-white shadow-sm flex flex-col justify-between">
+      <div>
+        <p className="text-sm text-gray-600 mb-1">ATS Match Score</p>
+        <p className="text-3xl font-bold text-indigo-600">{atsScore}%</p>
+      </div>
+
+      <div className="w-full h-2 bg-gray-200 rounded mt-4 overflow-hidden">
         <div
           style={{ width: `${atsScore}%` }}
           className="h-2 bg-indigo-500 rounded"
-        ></div>
+        />
       </div>
-    </div>
 
-    {/* KEYWORDS COUNT */}
-    <div className="p-5 border rounded-lg bg-white shadow-sm">
-      <p className="text-sm text-gray-600 mb-1">Missing Keywords</p>
-      <p className="text-xl font-semibold text-red-600">
-        {missingKeywords?.length || 0}
+      <p className="text-xs text-gray-500 mt-2">
+        {atsScore >= 75
+          ? "Strong match for this role"
+          : atsScore >= 50
+          ? "Average match — improvements recommended"
+          : "Low match — resume needs optimization"}
       </p>
     </div>
 
-    {/* STRENGTH COUNT */}
-    <div className="p-5 border rounded-lg bg-white shadow-sm">
+    {/* Missing Keywords */}
+    <div className="p-5 border rounded-lg bg-white shadow-sm flex flex-col justify-center">
+      <p className="text-sm text-gray-600 mb-1">Missing Keywords</p>
+      <p className="text-3xl font-bold text-red-600">
+        {missingKeywords?.length || 0}
+      </p>
+      <p className="text-xs text-gray-500 mt-2">
+        Important skills not detected in resume
+      </p>
+    </div>
+
+    {/* Strengths */}
+    <div className="p-5 border rounded-lg bg-white shadow-sm flex flex-col justify-center">
       <p className="text-sm text-gray-600 mb-1">Strength Areas</p>
-      <p className="text-xl font-semibold text-green-600">
+      <p className="text-3xl font-bold text-green-600">
         {strengths?.length || 0}
+      </p>
+      <p className="text-xs text-gray-500 mt-2">
+        Relevant strengths identified
       </p>
     </div>
   </div>
 
-  {/* TWO-COLUMN MAIN SECTION */}
+  {/* Main Content */}
   <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
 
-    {/* LEFT COLUMN */}
+    {/* Left Column */}
     <div className="col-span-1 space-y-6">
 
       {/* Missing Keywords */}
       <div className="border rounded-lg bg-white shadow-sm p-5">
-        <p className="font-medium text-gray-800 mb-3">Missing Keywords</p>
+        <p className="font-medium text-gray-800 mb-3">
+          Missing Keywords
+        </p>
+
         <div className="space-y-2">
           {missingKeywords?.length ? (
             missingKeywords.map((kw, idx) => (
@@ -183,14 +210,19 @@ const ResultDisplay = ({ data }) => {
               </div>
             ))
           ) : (
-            <p className="text-green-600 text-sm">No missing keywords 🎉</p>
+            <p className="text-green-600 text-sm">
+              No missing keywords detected 🎉
+            </p>
           )}
         </div>
       </div>
 
       {/* Strengths */}
       <div className="border rounded-lg bg-white shadow-sm p-5">
-        <p className="font-medium text-gray-800 mb-3">Strengths</p>
+        <p className="font-medium text-gray-800 mb-3">
+          Strengths
+        </p>
+
         <div className="space-y-2">
           {strengths?.map((s, idx) => (
             <div
@@ -205,24 +237,33 @@ const ResultDisplay = ({ data }) => {
       </div>
     </div>
 
-    {/* RIGHT WIDE COLUMN */}
+    {/* Right Column */}
     <div className="col-span-2 space-y-6">
 
-      {/* FEEDBACK */}
+      {/* Feedback */}
       <div className="border rounded-lg bg-white shadow-sm p-5">
-        <p className="font-medium text-gray-800 mb-3">Detailed Feedback</p>
+        <p className="font-medium text-gray-800 mb-3">
+          Detailed Feedback
+        </p>
+
         <div className="space-y-3">
           {feedback?.map((f, i) => (
-            <div key={i} className="p-3 text-sm bg-gray-50 rounded border">
+            <div
+              key={i}
+              className="p-3 text-sm bg-gray-50 rounded border"
+            >
               {f}
             </div>
           ))}
         </div>
       </div>
 
-      {/* SUMMARY */}
+      {/* Summary */}
       <div className="border rounded-lg bg-white shadow-sm p-5">
-        <p className="font-medium text-gray-800 mb-3">Matching Summary</p>
+        <p className="font-medium text-gray-800 mb-3">
+          Matching Summary
+        </p>
+
         <p className="text-sm text-gray-700 leading-relaxed">
           {matchingSummary?.length
             ? matchingSummary.join(" ")
@@ -230,22 +271,33 @@ const ResultDisplay = ({ data }) => {
         </p>
       </div>
 
-      {/* ADVICE */}
+      {/* Advice */}
       <div className="border rounded-lg bg-white shadow-sm p-5">
-        <p className="font-medium text-gray-800 mb-3">Actionable Advice</p>
-        <ul className="list-disc list-inside text-sm text-gray-700 space-y-1">
-          {yourAdvice?.length ? (
-            yourAdvice.map((a, i) => <li key={i}>{a}</li>)
-          ) : (
-            <li>No advice available.</li>
-          )}
-        </ul>
+        <p className="font-medium text-gray-800 mb-3">
+          Actionable Advice
+        </p>
+
+        <ul className="space-y-2 text-sm text-gray-700">
+  {yourAdvice?.map((a, i) => (
+    <li key={i} className="leading-relaxed">
+      <ReactMarkdown
+        components={{
+          strong: ({ node, ...props }) => (
+            <strong className="font-semibold text-gray-900" {...props} />
+          )
+        }}
+      >
+        {a}
+      </ReactMarkdown>
+    </li>
+  ))}
+</ul>
       </div>
     </div>
   </div>
 
-  {/* DOWNLOAD BUTTON */}
-  <div className="text-center mt-10">
+  {/* Download */}
+  <div className="text-center mt-12">
     <button
       onClick={() => handleDownloadReport(data)}
       className="px-6 py-2.5 rounded-md bg-indigo-600 text-white font-medium shadow hover:bg-indigo-700"
@@ -254,6 +306,7 @@ const ResultDisplay = ({ data }) => {
     </button>
   </div>
 </div>
+
 
   );
 };
