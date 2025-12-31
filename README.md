@@ -30,8 +30,8 @@
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/pranavkharote/smartPrep.git
-cd smartprep
+git clone https://github.com/Pranavkharote/resume-analyzer.git
+cd resume-analyzer
 
 # 2. Backend setup
 cd backend
